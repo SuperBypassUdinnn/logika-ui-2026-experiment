@@ -32,3 +32,4 @@ python scripts/audit_submission.py outputs/submissions/sub01/submission.csv
 - Sinkron `current/<nama>/` via PR harian.
 
 Lihat `docs/WORKFLOW.md` dan `AGENTS.md`.
+Anggota baru mulai dari `docs/SETUP_ANGGOTA_TIM.md`.
