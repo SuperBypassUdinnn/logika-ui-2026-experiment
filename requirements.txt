@@ -1,0 +1,13 @@
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3
+scipy>=1.11
+lightgbm>=4.0
+pyarrow>=14.0
+matplotlib>=3.8
+seaborn>=0.13
+tqdm>=4.66
+jupyter_client>=8.0
+nbformat>=5.9
+kaggle>=1.6
+ruff>=0.4

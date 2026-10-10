@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Data (diunduh via Kaggle, jangan commit)
+data/*.csv
+data/*.parquet
+*.npy
+!outputs/**/*.npy
+outputs/**/__pycache__/
+
+# Notebook outputs berat
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Kaggle credentials
+.kaggle/
