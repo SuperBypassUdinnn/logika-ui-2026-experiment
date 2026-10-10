@@ -36,6 +36,22 @@ cd logika-ui-2026-experiment
 pip install -r requirements.txt
 ```
 
+Submodule memakai URL SSH, jadi butuh SSH key:
+
+```bash
+ssh-keygen -t ed25519 -C "email@kamu"
+cat ~/.ssh/id_ed25519.pub
+# tambah ke GitHub > Settings > SSH and GPG keys, lalu tes:
+ssh -T git@github.com
+```
+
+Tanpa SSH key, paksa submodule lewat HTTPS (lokal saja):
+
+```bash
+git config submodule.current/fadhlur.url https://github.com/SuperBypassUdinnn/logika-ui-2026-notebook-experiment.git
+git submodule update --init --recursive
+```
+
 Catatan path Windows:
 
 - Hindari folder dengan spasi (misal `Documents/Lomba UI/` bisa bermasalah di script).
@@ -84,5 +100,7 @@ lalu copy file ke `current/<nama>/`.
 
 - Baris `CRLF` vs `LF`: biarkan default Git, jangan edit `.ipynb` manual.
 - `Permission denied` saat submodule: tutup VSCode/Explorer yang mengunci folder.
+  Jika `Permission denied (publickey)`, daftarkan SSH key (bagian 3)
+  atau pakai override HTTPS.
 - Python menunjuk Microsoft Store: install dari python.org dan perbaiki PATH.
 - Untuk training penuh 1GB, colok charger + tutup browser agar RAM lega.

@@ -7,6 +7,9 @@ Pengguna Windows baca juga `SETUP_WINDOWS.md`.
 ## 1. Prasyarat
 
 - Git + GitHub CLI (`gh auth login`)
+- SSH key terdaftar di GitHub (URL submodule memakai SSH):
+  `ssh-keygen -t ed25519 -C "email@kamu"` lalu tambah ke GitHub
+  (Settings > SSH and GPG keys). Tes: `ssh -T git@github.com`
 - Python 3.11
 - Akun Kaggle + `kaggle.json` di `~/.kaggle/` (chmod 600)
 - Ikuti kompetisi `data-science-competition-logika-ui-2026` di Kaggle (Accept Rules)
@@ -18,9 +21,11 @@ git clone --recurse-submodules https://github.com/SuperBypassUdinnn/logika-ui-20
 cd logika-ui-2026-experiment
 ```
 
-Jika sudah clone tanpa submodule:
+Jika belum punya SSH key, paksa submodule lewat HTTPS (lokal saja,
+tanpa ubah repo):
 
 ```bash
+git config submodule.current/fadhlur.url https://github.com/SuperBypassUdinnn/logika-ui-2026-notebook-experiment.git
 git submodule update --init --recursive
 ```
 
@@ -74,13 +79,15 @@ python scripts/audit_submission.py outputs/experiments/expXXX/submission.csv --o
   (Kaggle `fadhlurrahmanalaudin/logika-ui-2026-notebook-experiment`).
 - `current/farhan/` dan `current/ilham/` masih placeholder.
 
-Untuk Farhan/Ilham setelah kernel Kaggle dibuat:
+Untuk Farhan (`C4R4MeL`)/Ilham (`MuhIlham420`) setelah kernel Kaggle dibuat:
 
 ```bash
 # 1. Buat notebook di Kaggle, catat slug user/kernel
-# 2. Minta owner menambahkan submodule:
-git submodule add https://github.com/<org>/<notebook-repo>.git current/farhan
-# 3. Isi kaggle_slug di current/members.json
+# 2. Buat repo notebook GitHub masing-masing, minta owner pasang deploy key
+#    read-only untuk CI (1 key per repo, lihat riwayat fix(ci))
+# 3. Minta owner menambahkan submodule (pakai URL SSH agar CI bisa clone):
+git submodule add git@github.com:<org>/<notebook-repo>.git current/farhan
+# 4. Isi kaggle_slug + github_repo di current/members.json
 python scripts/kaggle_sync.py --member farhan --pull
 ```
 
@@ -113,4 +120,8 @@ Agen dilarang submit tanpa persetujuan.
 - OOM lokal: tutup browser, olah per-file dengan `chunksize`, pakai
   `float32/int32` + `pyarrow string`.
 - Submodule kosong: jalankan `git submodule update --init --recursive`.
+  Jika error `Permission denied (publickey)`, daftarkan SSH key ke GitHub
+  atau pakai override HTTPS di bagian 2.
+- CI merah di checkout: pastikan URL submodule SSH dan secret
+  `SUBMODULE_SSH_KEY` masih valid (deploy key read-only di repo notebook).
 - Kuota habis: berhenti, lanjut besok 07:00 WIB.
