@@ -1,0 +1,9 @@
+# Code owners: leader merges to main, all experiments via PR.
+# Update with Farhan and Ilham GitHub usernames when invited.
+
+* @SuperBypassUdinnn
+/docs/ @SuperBypassUdinnn
+/src/ @SuperBypassUdinnn
+/scripts/ @SuperBypassUdinnn
+/current/farhan/ @SuperBypassUdinnn
+/current/ilham/ @SuperBypassUdinnn

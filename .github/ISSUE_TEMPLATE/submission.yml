@@ -1,0 +1,19 @@
+name: Submission
+description: Request audit dan persetujuan submission Kaggle
+title: "[sub]: "
+labels: ["submission"]
+body:
+  - type: input
+    id: path
+    attributes:
+      label: Path submission.csv
+      description: Contoh outputs/submissions/sub01/submission.csv
+    validations:
+      required: true
+  - type: textarea
+    id: scorecard
+    attributes:
+      label: Scorecard audit
+      description: Output scripts/audit_submission.py + OOF KS
+    validations:
+      required: true

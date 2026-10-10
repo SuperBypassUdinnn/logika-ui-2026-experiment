@@ -1,0 +1,19 @@
+name: Eksperimen
+description: Usulan atau laporan eksperimen tabular KS
+title: "[exp]: "
+labels: ["experiment"]
+body:
+  - type: textarea
+    id: hipotesis
+    attributes:
+      label: Hipotesis
+      description: Delta fitur/model dan dampak OOF KS yang diharapkan
+    validations:
+      required: true
+  - type: textarea
+    id: leakage
+    attributes:
+      label: Checklist leakage
+      description: Kolom waktu cutoff yang dipakai
+    validations:
+      required: true
