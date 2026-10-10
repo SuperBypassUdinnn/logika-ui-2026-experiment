@@ -8,8 +8,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
-          ssh-key: ${{ secrets.SUBMODULE_SSH_KEY }}
+          submodules: false
+      - name: Checkout private submodules via deploy key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SUBMODULE_SSH_KEY }}" > ~/.ssh/submodule_key
+          chmod 600 ~/.ssh/submodule_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/submodule_key" git submodule update --init --recursive
+          rm -f ~/.ssh/submodule_key
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
