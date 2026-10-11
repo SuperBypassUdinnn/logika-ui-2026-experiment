@@ -17,6 +17,7 @@ import sys
 import time
 from pathlib import Path
 
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
 
@@ -51,7 +52,8 @@ def load_data(train_path: str, test_path: str, folds_path: str, drop_extra=()):
     return train, test, features
 
 
-def run_experiment(train, test, features, params, seed, outdir, title):
+def run_experiment(train, test, features, params, seed, outdir, title,
+                   early_stopping=0):
     seed_all(seed)
     y = train[TARGET_COL].to_numpy()
     oof = np.zeros(len(train))
@@ -62,7 +64,15 @@ def run_experiment(train, test, features, params, seed, outdir, title):
     for fold in sorted(train["fold"].unique()):
         tr = train["fold"] != fold
         model = make_lgbm(seed=seed, **params)
-        model.fit(train.loc[tr, features], y[tr])
+        if early_stopping > 0:
+            model.fit(
+                train.loc[tr, features],
+                y[tr],
+                eval_set=[(train.loc[~tr, features], y[~tr])],
+                callbacks=[lgb.early_stopping(early_stopping, verbose=False)],
+            )
+        else:
+            model.fit(train.loc[tr, features], y[tr])
         oof[~tr] = model.predict_proba(train.loc[~tr, features])[:, 1]
         test_pred += model.predict_proba(test[features])[:, 1] / n_folds
         print(f"fold {fold}: done", flush=True)
@@ -105,6 +115,7 @@ def main() -> None:
     ap.add_argument("--folds", default="train_folds.csv")
     ap.add_argument("--out", default="outputs/experiments")
     ap.add_argument("--params", default="{}")
+    ap.add_argument("--early-stopping", type=int, default=0)
     ap.add_argument("--drop-cols", default="")
     ap.add_argument("--seed", type=int, default=SEED)
     args = ap.parse_args()
@@ -119,6 +130,7 @@ def main() -> None:
         args.seed,
         Path(args.out) / args.member / args.exp,
         f"{args.member}/{args.exp}",
+        early_stopping=args.early_stopping,
     )
 
 
