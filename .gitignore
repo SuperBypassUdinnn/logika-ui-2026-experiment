@@ -8,9 +8,14 @@ venv/
 # Data (diunduh via Kaggle, jangan commit)
 data/*.csv
 data/*.parquet
+*.parquet
 *.npy
 !outputs/**/*.npy
 outputs/**/__pycache__/
+
+# Root stays clean: only train_folds.csv may live at top level
+/*.csv
+!/train_folds.csv
 
 # Notebook outputs berat
 .ipynb_checkpoints/

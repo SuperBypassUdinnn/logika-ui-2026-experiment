@@ -13,6 +13,7 @@ Tim 3 orang: Farhan (leader), Fadhlurrahman Alaudin (`fadhlurrahmanalaudin`), Il
 - `data/` — tidak di-commit, diunduh via Kaggle API
 - `current/` — submodule per anggota: `current/fadhlur`, `current/farhan`, `current/ilham`
 - `.agents/rules/` — aturan agen (English, technical)
+- `.agents/knowledge/` — spek lomba kanonis (overview, rules)
 
 ## Quickstart
 
