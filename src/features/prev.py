@@ -42,6 +42,12 @@ def agg_prev(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "prev_n_rejected": g["decision"].apply(lambda s: (s == "rejected").sum()),
             "prev_requested_sum": g["requested_amount"].sum(),
             "prev_approved_sum": g["approved_amount"].sum(),
+            "prev_term_mean": g["term_months"].mean(),
+            "prev_term_max": g["term_months"].max(),
+            "prev_sched_sum": g["scheduled_monthly_installment"].sum(),
+            "prev_req_appr_gap": g.apply(
+                lambda d: (d["requested_amount"] - d["approved_amount"].fillna(0)).sum()
+            ),
             "prev_days_since_last": g.apply(
                 lambda d: (d["cutoff"].iloc[0] - d["decision_datetime"].max()).days
             ),
