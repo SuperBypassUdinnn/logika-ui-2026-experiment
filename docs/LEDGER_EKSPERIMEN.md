@@ -24,6 +24,11 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp017 | 2026-10-11 | CatBoost kategorikal natif | 0.3934 | - | - | done | outputs/experiments/fadhlur/exp017/log.md |
 | fadhlur/exp018 | 2026-10-11 | Eco kategori+payment, streak prev, spread bureau (87 fitur) | 0.4543 | 0.444-0.475 | - | done | outputs/experiments/fadhlur/exp018/log.md |
 | fadhlur/exp019 | 2026-10-11 | days_since_* + ES200 n5000 reg5 (108 fitur) | 0.4730 | 0.456-0.491 | - | done | outputs/experiments/fadhlur/exp019/log.md |
+| fadhlur/exp020 | 2026-10-11 | XGBoost di 108 fitur | 0.4717 | - | - | done | outputs/experiments/fadhlur/exp020/log.md |
+| fadhlur/exp021 | 2026-10-11 | CatBoost kategorikal natif 108 fitur | 0.4694 | - | - | done | outputs/experiments/fadhlur/exp021/log.md |
+| fadhlur/exp022 | 2026-10-11 | Blend 50/30/20 exp019+020+021 | 0.4757 | - | - | done | outputs/experiments/fadhlur/exp022/log.md |
+| fadhlur/exp023 | 2026-10-11 | Stacker logistik (di bawah blend) | 0.4725 | - | - | done | outputs/experiments/fadhlur/exp023/log.md |
+| fadhlur/exp024 | 2026-10-11 | Rasio lintas-tabel ke income (119 fitur) | 0.4709 | - | - | done | outputs/experiments/fadhlur/exp024/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.

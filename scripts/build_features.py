@@ -527,6 +527,14 @@ def main() -> None:
         print(f"{name}: {len(part)} applications with history")
         feat = feat.merge(part, on="application_id", how="left")
 
+    inc = feat["declared_monthly_income"].clip(lower=1)
+    feat["eco_spend_to_income"] = feat["eco_spend_sum"] / inc
+    feat["bureau_outstanding_to_income"] = feat["bureau_outstanding_sum"] / inc
+    feat["repay_due_to_income"] = feat["repay_due_sum"] / inc
+    feat["repay_paid_to_income"] = feat["repay_paid_sum"] / inc
+    feat["prev_requested_to_income"] = feat["prev_requested_sum"] / inc
+    feat["acct_outflows_to_income"] = feat["acct_outflows_sum"] / inc
+
     for c in feat.columns:
         if c.startswith(
             (
