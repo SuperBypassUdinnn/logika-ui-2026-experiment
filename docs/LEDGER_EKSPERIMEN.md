@@ -53,6 +53,8 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp046 | 2026-10-11 | XGBoost di 186 fitur | 0.5018 | - | - | done | outputs/experiments/fadhlur/exp046/log.md |
 | fadhlur/exp047 | 2026-10-11 | CatBoost 186 fitur | 0.5058 | - | - | done | outputs/experiments/fadhlur/exp047/log.md |
 | fadhlur/exp048 | 2026-10-11 | Blend 40/25/20/15 farhan+LGBM+XGB+CAT | 0.5088 | - | - | done | outputs/experiments/fadhlur/exp048/log.md |
+| fadhlur/exp049 | 2026-10-12 | Optuna 40 trial + setup penuh | 0.5080 | 0.497-0.522 | - | done | outputs/experiments/fadhlur/exp049/log.md |
+| fadhlur/exp050 | 2026-10-12 | Blend 45/30/15/10 farhan+049+XGB+CAT | 0.5086 | - | - | done | outputs/experiments/fadhlur/exp050/log.md |
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
