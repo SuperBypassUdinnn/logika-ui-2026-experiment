@@ -56,7 +56,8 @@ For every model, feature, or post-processing change, record in
 - `.agents/skills/`: project skills, single source of truth, auto-discovered
   by OpenCode (compatibility path) and Antigravity, do not mirror elsewhere
 - `.agents/rules/`: agent rules; `.agents/knowledge/`: canonical competition
-  spec (overview, rules)
+  spec (overview, rules); `.agents/MEMORY.md`: shared project memory
+  (decisions, stack, conventions) readable by all agents
 
 ## 6. Git Constraints
 
