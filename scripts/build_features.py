@@ -133,9 +133,6 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = with_cutoff(rep, apps)
     m = m[m["due_date"] < m[CUTOFF]]
     m["overdue"] = (m["days_past_due"] > 0).astype("int8")
-    m["dpd_band"] = pd.cut(
-        m["days_past_due"], [-1, 0, 30, 90, 10**9], labels=["ok", "mild", "bad", "severe"]
-    )
     m["cured"] = ((m["days_past_due"] > 0) & (m["amount_paid"] >= m["amount_due"])).astype(
         "int8"
     )
@@ -148,9 +145,6 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_paid_sum": g["amount_paid"].sum(),
             "repay_dpd_max": g["days_past_due"].max(),
             "repay_overdue_n": g["overdue"].sum(),
-            "repay_mild_n": g["dpd_band"].apply(lambda s: (s == "mild").sum()),
-            "repay_bad_n": g["dpd_band"].apply(lambda s: (s == "bad").sum()),
-            "repay_severe_n": g["dpd_band"].apply(lambda s: (s == "severe").sum()),
             "repay_cured_n": g["cured"].sum(),
             "repay_recent_n": g["recent"].sum(),
             "repay_recent_dpd_max": g.apply(
@@ -172,6 +166,32 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     out["repay_recent_pay_ratio"] = out["repay_recent_paid_sum"] / out[
         "repay_recent_due_sum"
     ].clip(lower=1)
+
+    per_loan = (
+        m.groupby(["application_id", "loan_id"])
+        .agg(
+            loan_dpd_max=("days_past_due", "max"),
+            loan_due=("amount_due", "sum"),
+            loan_paid=("amount_paid", "sum"),
+        )
+        .reset_index()
+    )
+    per_loan["loan_pay_ratio"] = per_loan["loan_paid"] / per_loan["loan_due"].clip(
+        lower=1
+    )
+    per_loan["loan_bad90"] = (per_loan["loan_dpd_max"] >= 90).astype("int8")
+    gl = per_loan.groupby("application_id")
+    loan_agg = pd.DataFrame(
+        {
+            "repay_n_loans": gl.size(),
+            "repay_worst_loan_dpd": gl["loan_dpd_max"].max(),
+            "repay_n_loans90": gl["loan_bad90"].sum(),
+            "repay_worst_loan_pay_ratio": gl["loan_pay_ratio"].min(),
+            "repay_mean_loan_pay_ratio": gl["loan_pay_ratio"].mean(),
+        }
+    ).reset_index()
+    out = out.merge(loan_agg, on="application_id", how="left")
+
     last = (
         m.sort_values("due_date")
         .groupby("application_id")

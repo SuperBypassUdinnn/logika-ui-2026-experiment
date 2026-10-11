@@ -19,6 +19,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp012 | 2026-10-11 | Drop 15 fitur gain-rendah (negatif) | 0.3908 | 0.383-0.411 | - | done | outputs/experiments/fadhlur/exp012/log.md |
 | fadhlur/exp013 | 2026-10-11 | XGBoost mirror setup LGBM | 0.3949 | 0.388-0.406 | - | done | outputs/experiments/fadhlur/exp013/log.md |
 | fadhlur/exp014 | 2026-10-11 | Blend 60/40 exp011+exp013 | 0.3964 | - | - | done | outputs/experiments/fadhlur/exp014/log.md |
+| fadhlur/exp015 | 2026-10-11 | Agregat per-loan worst/pay-ratio (redundan) | 0.3936 | 0.381-0.412 | - | done | outputs/experiments/fadhlur/exp015/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.
