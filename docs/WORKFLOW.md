@@ -40,6 +40,17 @@ Dokumen ini hasil penyempurnaan dari workflow lomba vision lama.
     bisa didiagnosis dari repo.
 11. Sinkron `notebooks/current/<nama>/` via `scripts/kaggle_sync.py` + PR harian.
 
+## Kepemilikan modul fitur (anti-bentrok)
+
+`src/features/` satu modul per tabel (`prev.py`, `repay.py`, `account.py`,
+`bureau.py`, `eco.py`, `base.py`, `cross.py`). Aturan:
+
+1. Fitur baru ditulis di modul tabel pemiliknya, fungsi/kolom baru —
+   jangan tulis ulang blok orang lain.
+2. `scripts/build_features.py` hanya orkestrasi (tidak ada logika fitur).
+3. Verifikasi refactor: rebuild ke `/tmp` dan bandingkan parquet identik
+   sebelum commit.
+
 ## Aturan notebook (adopsi skill notebook-workflow)
 
 Notebook boleh dipakai untuk EDA dan narasi, tapi logika tetap di `src/`:
