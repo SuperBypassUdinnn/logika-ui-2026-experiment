@@ -60,6 +60,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp053 | 2026-10-12 | XGBoost di 190 fitur | 0.5030 | - | - | done | outputs/experiments/fadhlur/exp053/log.md |
 | fadhlur/exp054 | 2026-10-12 | CatBoost 190 fitur | 0.5052 | - | - | done | outputs/experiments/fadhlur/exp054/log.md |
 | fadhlur/exp055 | 2026-10-12 | Blend 30/35/20/15 (jenuh, di bawah single) | 0.5100 | - | - | done | outputs/experiments/fadhlur/exp055/log.md |
+| fadhlur/exp056 | 2026-10-12 | Tren lintas-loan (mayoritas 1 loan, datar) | 0.5074 | 0.495-0.521 | - | done | outputs/experiments/fadhlur/exp056/log.md |
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 

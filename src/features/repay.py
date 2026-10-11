@@ -11,9 +11,11 @@ from src.features.common import CUTOFF, with_cutoff
 def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     loan_customer = pd.read_csv(
         data / "previous_applications.csv",
-        usecols=["loan_id", "customer_id"],
+        usecols=["loan_id", "customer_id", "decision_datetime"],
+        parse_dates=["decision_datetime"],
     ).dropna(subset=["loan_id"])
     loan_customer = loan_customer.drop_duplicates("loan_id")
+    loan_customer = loan_customer.rename(columns={"decision_datetime": "orig_date"})
     rep = pd.read_csv(
         data / "repayment_history.csv",
         usecols=[
@@ -94,6 +96,11 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         lower=1
     )
     per_loan["loan_bad90"] = (per_loan["loan_dpd_max"] >= 90).astype("int8")
+    per_loan = per_loan.merge(
+        loan_customer[["loan_id", "orig_date"]],
+        on="loan_id",
+        how="left",
+    )
     gl = per_loan.groupby("application_id")
     loan_agg = pd.DataFrame(
         {
@@ -105,6 +112,35 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         }
     ).reset_index()
     out = out.merge(loan_agg, on="application_id", how="left")
+
+    def loan_trend(d):
+        d = d.sort_values("orig_date")
+        if len(d) < 2 or d["orig_date"].isna().all():
+            return pd.Series(
+                {"repay_loan_dpd_trend": 0.0, "repay_loan_pay_trend": 0.0}
+            )
+        first = d.iloc[0]
+        last = d.iloc[-1]
+        return pd.Series(
+            {
+                "repay_loan_dpd_trend": float(
+                    last["loan_dpd_max"] - first["loan_dpd_max"]
+                ),
+                "repay_loan_pay_trend": float(
+                    last["loan_pay_ratio"] - first["loan_pay_ratio"]
+                ),
+            }
+        )
+
+    out = out.merge(
+        per_loan.groupby("application_id")[
+            ["orig_date", "loan_dpd_max", "loan_pay_ratio"]
+        ]
+        .apply(loan_trend)
+        .reset_index(),
+        on="application_id",
+        how="left",
+    )
 
     last_dates = (
         m.groupby("application_id")
