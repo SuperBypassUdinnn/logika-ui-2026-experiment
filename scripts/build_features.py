@@ -29,6 +29,7 @@ def scored_apps(data: Path) -> pd.DataFrame:
         usecols=[
             "application_id",
             "customer_id",
+            "application_datetime",
             "decision_datetime",
             "loan_amount",
             "term_months",
@@ -37,7 +38,7 @@ def scored_apps(data: Path) -> pd.DataFrame:
             "loan_purpose",
             "target",
         ],
-        parse_dates=["decision_datetime"],
+        parse_dates=["application_datetime", "decision_datetime"],
     )
     train["is_train"] = True
     test = pd.read_csv(
@@ -45,6 +46,7 @@ def scored_apps(data: Path) -> pd.DataFrame:
         usecols=[
             "application_id",
             "customer_id",
+            "application_datetime",
             "decision_datetime",
             "loan_amount",
             "term_months",
@@ -52,7 +54,7 @@ def scored_apps(data: Path) -> pd.DataFrame:
             "proposed_monthly_installment",
             "loan_purpose",
         ],
-        parse_dates=["decision_datetime"],
+        parse_dates=["application_datetime", "decision_datetime"],
     )
     test["is_train"] = False
     return pd.concat([train, test], ignore_index=True)
@@ -145,8 +147,9 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "amount_due",
             "amount_paid",
             "days_past_due",
+            "last_payment_datetime",
         ],
-        parse_dates=["due_date"],
+        parse_dates=["due_date", "last_payment_datetime"],
     )
     rep = rep.merge(loan_customer, on="loan_id", how="inner")
     m = with_cutoff(rep, apps)
@@ -210,6 +213,17 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         }
     ).reset_index()
     out = out.merge(loan_agg, on="application_id", how="left")
+
+    last_dates = (
+        m.groupby("application_id")
+        .agg(last_due=("due_date", "max"), last_paid=("last_payment_datetime", "max"))
+        .reset_index()
+    )
+    out = out.merge(last_dates, on="application_id", how="left")
+    out = out.merge(apps[["application_id", CUTOFF]], on="application_id", how="left")
+    out["repay_days_since_due"] = (out[CUTOFF] - out["last_due"]).dt.days
+    out["repay_days_since_paid"] = (out[CUTOFF] - out["last_paid"]).dt.days
+    out = out.drop(columns=["last_due", "last_paid", CUTOFF])
 
     last = (
         m.sort_values("due_date")
@@ -304,6 +318,18 @@ def agg_account(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         on="application_id",
         how="left",
     )
+    last_month = (
+        m.groupby("application_id")["month"].max().reset_index(name="acct_last_month")
+    )
+    out = out.merge(last_month, on="application_id", how="left")
+    out = out.merge(apps[["application_id", CUTOFF]], on="application_id", how="left")
+    out["acct_months_since"] = (
+        out[CUTOFF].dt.year * 12
+        + out[CUTOFF].dt.month
+        - out["acct_last_month"].dt.year * 12
+        - out["acct_last_month"].dt.month
+    )
+    out = out.drop(columns=["acct_last_month", CUTOFF])
     return out
 
 
@@ -378,6 +404,17 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     )
     out["bureau_score_spread"] = spread["max"] - spread["min"]
     out["bureau_n_providers"] = spread["count"]
+    last_rep = (
+        m.groupby("application_id")["available_datetime"]
+        .max()
+        .reset_index(name="bureau_last_available")
+    )
+    out = out.merge(last_rep, on="application_id", how="left")
+    out = out.merge(apps[["application_id", CUTOFF]], on="application_id", how="left")
+    out["bureau_days_since_report"] = (
+        out[CUTOFF] - out["bureau_last_available"]
+    ).dt.days
+    out = out.drop(columns=["bureau_last_available", CUTOFF])
     return out
 
 
@@ -441,6 +478,14 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items["eco_cancel_rate"] = (
         items["eco_n_cancelled"] / n_items.reindex(items["application_id"]).to_numpy()
     ).fillna(0)
+    last_txn = (
+        m.groupby("application_id")
+        .agg(last_txn=("transaction_datetime", "max"), cutoff=(CUTOFF, "first"))
+        .reset_index()
+    )
+    items = items.merge(last_txn, on="application_id", how="left")
+    items["eco_days_since_txn"] = (items["cutoff"] - items["last_txn"]).dt.days
+    items = items.drop(columns=["last_txn", "cutoff"])
     return orders.merge(items, on="application_id", how="outer")
 
 
@@ -465,6 +510,9 @@ def main() -> None:
     ].clip(lower=1)
     feat["rate_x_loan"] = feat["annual_interest_rate"] * feat["loan_amount"]
     feat["rate_x_term"] = feat["annual_interest_rate"] * feat["term_months"]
+    feat["decision_lag_h"] = (
+        feat[CUTOFF] - feat["application_datetime"]
+    ).dt.total_seconds() / 3600
     feat["decision_month"] = feat[CUTOFF].dt.month.astype("int8")
     feat["decision_weekday"] = feat[CUTOFF].dt.weekday.astype("int8")
 

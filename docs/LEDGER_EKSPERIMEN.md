@@ -23,6 +23,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp016 | 2026-10-11 | Bagging 3 seed LGBM (negatif) | 0.3941 | - | - | done | outputs/experiments/fadhlur/exp016/log.md |
 | fadhlur/exp017 | 2026-10-11 | CatBoost kategorikal natif | 0.3934 | - | - | done | outputs/experiments/fadhlur/exp017/log.md |
 | fadhlur/exp018 | 2026-10-11 | Eco kategori+payment, streak prev, spread bureau (87 fitur) | 0.4543 | 0.444-0.475 | - | done | outputs/experiments/fadhlur/exp018/log.md |
+| fadhlur/exp019 | 2026-10-11 | days_since_* + ES200 n5000 reg5 (108 fitur) | 0.4730 | 0.456-0.491 | - | done | outputs/experiments/fadhlur/exp019/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.
