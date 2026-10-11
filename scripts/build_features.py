@@ -159,6 +159,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m["overdue_amt"] = ((m["amount_due"] - m["amount_paid"]).clip(lower=0)) * m[
         "overdue"
     ]
+    m["rec_w"] = 1.0 / (1.0 + (m[CUTOFF] - m["due_date"]).dt.days.clip(lower=0) / 30.0)
     m["cured"] = (
         (m["days_past_due"] > 0) & (m["amount_paid"] >= m["amount_due"])
     ).astype("int8")
@@ -172,6 +173,11 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_dpd_max": g["days_past_due"].max(),
             "repay_overdue_n": g["overdue"].sum(),
             "repay_overdue_amt_sum": g["overdue_amt"].sum(),
+            "repay_rec_wlate": g.apply(lambda d: (d["overdue"] * d["rec_w"]).sum()),
+            "repay_rec_wdpd": g.apply(
+                lambda d: (d["days_past_due"] * d["rec_w"]).sum()
+            ),
+            "repay_rec_wsum": g["rec_w"].sum(),
             "repay_maxdpd_max": g["max_days_past_due"].max(),
             "repay_maxdpd_mean": g["max_days_past_due"].mean(),
             "repay_cured_n": g["cured"].sum(),
@@ -192,6 +198,10 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         }
     ).reset_index()
     out["repay_pay_ratio"] = out["repay_paid_sum"] / out["repay_due_sum"].clip(lower=1)
+    out["repay_late_ratio"] = out["repay_overdue_n"] / out["repay_n"].clip(lower=1)
+    out["repay_overdue_amt_ratio"] = out["repay_overdue_amt_sum"] / out[
+        "repay_due_sum"
+    ].clip(lower=1)
     out["repay_recent_pay_ratio"] = out["repay_recent_paid_sum"] / out[
         "repay_recent_due_sum"
     ].clip(lower=1)
@@ -254,12 +264,20 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         slope = (
             float(np.polyfit(x, last3.astype(float), 1)[0]) if len(last3) >= 2 else 0.0
         )
+        trail = 0
+        for v in dpd[::-1]:
+            if v > 0:
+                trail += 1
+            else:
+                break
         return pd.Series(
             {
                 "repay_last3_dpd_mean": float(last3.mean()),
                 "repay_dpd_slope": slope,
                 "repay_worsening": int(last3.max() > older.max()),
                 "repay_months_since_delinq": months_since,
+                "repay_trail_late_n": trail,
+                "repay_last3_late_ratio": float((last3 > 0).mean()),
             }
         )
 
@@ -411,6 +429,7 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     )
     out["bureau_score_spread"] = spread["max"] - spread["min"]
     out["bureau_n_providers"] = spread["count"]
+    out["bureau_score_nmiss"] = 3 - spread["count"]
     last_rep = (
         m.groupby("application_id")["available_datetime"]
         .max()
@@ -446,6 +465,7 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m["completed"] = (m["order_status"] == "completed").astype("int8")
     m["spend"] = m["item_total"] * m["completed"]
     m["days_since"] = (m[CUTOFF] - m["transaction_datetime"]).dt.days
+    m["rec_w"] = 1.0 / (1.0 + m["days_since"].clip(lower=0) / 30.0)
     m["recent90"] = (
         m["transaction_datetime"] >= m[CUTOFF] - pd.Timedelta(days=90)
     ).astype("int8")
@@ -477,6 +497,7 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             ),
             "eco_spend_90d": g.apply(lambda d: (d["spend"] * d["recent90"]).sum()),
             "eco_spend_30d": g.apply(lambda d: (d["spend"] * d["recent30"]).sum()),
+            "eco_rec_wspend": g.apply(lambda d: (d["spend"] * d["rec_w"]).sum()),
             "eco_n_orders_90d": g.apply(
                 lambda d: d.loc[d["recent90"] == 1, "order_id"].nunique()
             ),
