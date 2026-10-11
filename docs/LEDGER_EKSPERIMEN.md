@@ -56,6 +56,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp049 | 2026-10-12 | Optuna 40 trial + setup penuh | 0.5080 | 0.497-0.522 | - | done | outputs/experiments/fadhlur/exp049/log.md |
 | fadhlur/exp050 | 2026-10-12 | Blend 45/30/15/10 farhan+049+XGB+CAT | 0.5086 | - | - | done | outputs/experiments/fadhlur/exp050/log.md |
 | fadhlur/exp051 | 2026-10-12 | Bagging 5 seed config optuna (di bawah single) | 0.5074 | - | - | done | outputs/experiments/fadhlur/exp051/log.md |
+| fadhlur/exp052 | 2026-10-12 | Detail prev term/sched/gap (190 fitur) | 0.5103 | 0.499-0.524 | - | done | outputs/experiments/fadhlur/exp052/log.md |
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
