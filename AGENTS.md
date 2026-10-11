@@ -53,6 +53,10 @@ For every model, feature, or post-processing change, record in
 - `outputs/`: canonical artifacts only
 - `current/`: per-member submodules (`current/fadhlur`, `current/farhan`, `current/ilham`)
 - `docs/`: Bahasa Indonesia operational docs
+- `.agents/skills/`: project skills, single source of truth, auto-discovered
+  by OpenCode (compatibility path) and Antigravity, do not mirror elsewhere
+- `.agents/rules/`: agent rules; `.agents/knowledge/`: canonical competition
+  spec (overview, rules)
 
 ## 6. Git Constraints
 

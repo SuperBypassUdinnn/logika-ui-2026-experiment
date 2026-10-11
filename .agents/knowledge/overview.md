@@ -59,3 +59,5 @@ Full per-table rules: `docs/ANTI_LEAKAGE.md`.
 - Public LB 45% + Private LB 45% + Notebook reproducibility 10%.
 - Top 8 teams advance to offline final at Universitas Indonesia, Depok.
 - Notebook deadline 30 Oct 2026 23:59 WIB, late penalty 1 point/minute.
+- Competition window approx 10 Oct - 31 Oct 2026 (estimated from Kaggle
+  relative timestamps at scrape time; confirm exact close on Kaggle).

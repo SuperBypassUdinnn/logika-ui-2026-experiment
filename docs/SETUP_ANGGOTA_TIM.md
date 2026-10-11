@@ -147,7 +147,7 @@ Agen dilarang submit tanpa persetujuan.
 ## 8. OpenCode dan Antigravity
 
 - Skill project: `ds-experiment-workflow` dan `submission-gatekeeper`
-  (di `.opencode/skills/` dan `.agents/skills/`).
+  (di `.agents/skills/`, terbaca OpenCode dan Antigravity).
 - Buka OpenCode dari folder repo ini agar skill terdeteksi.
 - Di Antigravity, aturan di `.agents/rules/` + `AGENTS.md` terbaca otomatis.
 
