@@ -46,9 +46,7 @@ def main() -> None:
     oof = sum(w * o for w, o in zip(args.weights, oofs))
     test_pred = sum(w * t for w, t in zip(args.weights, tests))
     ref = pd.read_csv(srccase / args.src[0] / "oof.csv")
-    scores = fold_ks(
-        ref["target"].to_numpy(), oof, ref["fold"].to_numpy()
-    )
+    scores = fold_ks(ref["target"].to_numpy(), oof, ref["fold"].to_numpy())
     print(f"BLEND OOF KS: {scores['oof']:.5f}")
 
     outdir = ensure_dir(str(base / args.member / args.exp))

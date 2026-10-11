@@ -152,9 +152,9 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = with_cutoff(rep, apps)
     m = m[m["due_date"] < m[CUTOFF]]
     m["overdue"] = (m["days_past_due"] > 0).astype("int8")
-    m["cured"] = ((m["days_past_due"] > 0) & (m["amount_paid"] >= m["amount_due"])).astype(
-        "int8"
-    )
+    m["cured"] = (
+        (m["days_past_due"] > 0) & (m["amount_paid"] >= m["amount_due"])
+    ).astype("int8")
     m["recent"] = (m["due_date"] >= m[CUTOFF] - pd.Timedelta(days=90)).astype("int8")
     g = m.groupby("application_id")
     out = pd.DataFrame(

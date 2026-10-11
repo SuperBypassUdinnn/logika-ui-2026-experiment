@@ -73,9 +73,7 @@ def main() -> None:
         )
         model.fit(
             Pool(train.loc[tr, features], y[tr], cat_features=cat_idx),
-            eval_set=Pool(
-                train.loc[~tr, features], y[~tr], cat_features=cat_idx
-            ),
+            eval_set=Pool(train.loc[~tr, features], y[~tr], cat_features=cat_idx),
             early_stopping_rounds=100,
         )
         oof[~tr] = model.predict_proba(train.loc[~tr, features])[:, 1]
