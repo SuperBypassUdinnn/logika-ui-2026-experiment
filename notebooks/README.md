@@ -13,6 +13,6 @@ Notebook tipis yang memanggil `src/`. Kode berat dilarang di notebook.
   (namespace tunggal milik tim, nomor diterbitkan leader via ledger,
   contoh `submissions/sub01_lgbm_baseline.ipynb`).
 
-Eksplorasi bebas boleh di `current/<member>/` masing-masing;
+Eksplorasi bebas boleh di `notebooks/current/<member>/` masing-masing;
 yang masuk `notebooks/` hanya hasil kurasi yang lolos audit + ledger.
 Lihat `docs/WORKFLOW.md` dan aturan pairing jupytext di sana.

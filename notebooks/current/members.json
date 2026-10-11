@@ -4,7 +4,7 @@
     "kaggle_username": "fadhlurrahmanalaudin",
     "kaggle_slug": "fadhlurrahmanalaudin/logika-ui-2026-notebook-experiment",
     "github_repo": "SuperBypassUdinnn/logika-ui-2026-notebook-experiment",
-    "path": "current/fadhlur"
+    "path": "notebooks/current/fadhlur"
   },
   "farhan": {
     "name": "Muhammad Farhan Alafif",
@@ -12,7 +12,7 @@
     "kaggle_username": "muhammadfarhanalafif",
     "kaggle_slug": null,
     "github_repo": null,
-    "path": "current/farhan"
+    "path": "notebooks/current/farhan"
   },
   "ilham": {
     "name": "M. Ilham",
@@ -20,6 +20,6 @@
     "kaggle_username": "IlhamPenyayang12",
     "kaggle_slug": null,
     "github_repo": null,
-    "path": "current/ilham"
+    "path": "notebooks/current/ilham"
   }
 }

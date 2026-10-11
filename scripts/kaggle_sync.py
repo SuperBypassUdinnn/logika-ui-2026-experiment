@@ -1,12 +1,12 @@
-"""Sync helper for current/<member>/ from Kaggle to GitHub.
+"""Sync helper for notebooks/current/<member>/ from Kaggle to GitHub.
 
 Usage:
   python scripts/kaggle_sync.py --member fadhlur --pull
   python scripts/kaggle_sync.py --member fadhlur --push
 
 Pull uses `kaggle kernels pull`, push uses `kaggle kernels push`.
-Member to kernel slug mapping is read from current/members.json,
-with fallback to current/<member>/kernel.json.
+Member to kernel slug mapping is read from notebooks/current/members.json,
+with fallback to notebooks/current/<member>/kernel.json.
 """
 
 import argparse
@@ -21,17 +21,19 @@ def run(cmd: list[str], cwd: Path) -> None:
 
 
 def resolve_slug(root: Path, member: str) -> str:
-    members_file = root / "current" / "members.json"
+    members_file = root / "notebooks" / "current" / "members.json"
     if members_file.exists():
         data = json.loads(members_file.read_text())
         entry = data.get(member, {})
         slug = entry.get("kaggle_slug")
         if slug:
             return slug
-    legacy = root / "current" / member / "kernel.json"
+    legacy = root / "notebooks" / "current" / member / "kernel.json"
     if legacy.exists():
         return json.loads(legacy.read_text())["slug"]
-    raise SystemExit(f"slug untuk {member} belum diisi di current/members.json")
+    raise SystemExit(
+        f"slug untuk {member} belum diisi di notebooks/current/members.json"
+    )
 
 
 def main() -> None:
@@ -42,7 +44,7 @@ def main() -> None:
     args = ap.parse_args()
 
     root = Path(__file__).resolve().parents[1]
-    mdir = root / "current" / args.member
+    mdir = root / "notebooks" / "current" / args.member
     slug = resolve_slug(root, args.member)
 
     if args.pull:

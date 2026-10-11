@@ -11,7 +11,7 @@ Tim 3 orang: Farhan (leader), Fadhlurrahman Alaudin (`fadhlurrahmanalaudin`), Il
 - `notebooks/` — pointer EDA/eksperimen (kode berat di `src/`, bukan builder 500+ baris)
 - `outputs/` — artefak per eksperimen/submission (satu-satunya lokasi kanonis)
 - `data/` — tidak di-commit, diunduh via Kaggle API
-- `current/` — submodule per anggota: `current/fadhlur`, `current/farhan`, `current/ilham`
+- `notebooks/current/` — submodule per anggota: `notebooks/current/fadhlur`, `notebooks/current/farhan`, `notebooks/current/ilham`
 - `.agents/rules/` — aturan agen (English, technical)
 - `.agents/knowledge/` — spek lomba kanonis (overview, rules)
 
@@ -30,7 +30,7 @@ python scripts/audit_submission.py outputs/submissions/sub01/submission.csv
 - OOF KS adalah kebenaran utama, bukan LB probing.
 - Semua fitur harus memakai cutoff `decision_datetime` (anti-leakage).
 - Satu eksperimen = satu folder `outputs/experiments/expXXX/` + satu baris ledger.
-- Sinkron `current/<nama>/` via PR harian.
+- Sinkron `notebooks/current/<nama>/` via PR harian.
 
 Lihat `docs/WORKFLOW.md` dan `AGENTS.md`.
 Anggota baru mulai dari `docs/SETUP_ANGGOTA_TIM.md`.

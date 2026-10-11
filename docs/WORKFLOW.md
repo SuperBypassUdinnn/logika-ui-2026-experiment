@@ -20,6 +20,9 @@ Dokumen ini hasil penyempurnaan dari workflow lomba vision lama.
 
 ## Alur baku
 
+0. EDA dulu: `notebooks/eda/<member>_<topik>.ipynb` (paired `.py` jupytext)
+   untuk eksplorasi + leakage check. Temuan angka (bukan chat) yang
+   mengarahkan fitur.
 1. Buat fold: `python scripts/make_folds.py`
 2. Bangun fitur: `python scripts/build_features.py` (join leakage-safe
    semua 7 tabel bantu ke `data/*_features.parquet`, otomatis ter-ignore).
@@ -29,7 +32,13 @@ Dokumen ini hasil penyempurnaan dari workflow lomba vision lama.
 6. Tambah satu baris ke `docs/LEDGER_EKSPERIMEN.md` di PR yang sama.
 7. Audit: `python scripts/audit_submission.py outputs/.../submission.csv --oof outputs/.../oof.csv`
 8. Minta persetujuan user, submit maksimal 3/hari.
-9. Sinkron `current/<nama>/` via `scripts/kaggle_sync.py` + PR harian.
+9. Notebook submission Kaggle digenerate, bukan ditulis tangan:
+   `python scripts/gen_kaggle_notebook.py --src-build <file_fitur> --dst notebooks/current/<nama>/*.ipynb`.
+   Dataset kompetisi wajib di-attach di notebook (resolver mencari
+   `train_applications.csv` di `/kaggle/input`).
+10. Simpan log run Kaggle ke `outputs/current/<nama>/` agar gagal cloud
+    bisa didiagnosis dari repo.
+11. Sinkron `notebooks/current/<nama>/` via `scripts/kaggle_sync.py` + PR harian.
 
 ## Aturan notebook (adopsi skill notebook-workflow)
 

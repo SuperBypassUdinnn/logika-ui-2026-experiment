@@ -35,7 +35,7 @@ cd logika-ui-2026-experiment
 Tanpa SSH key, paksa submodule lewat HTTPS (lokal saja):
 
 ```bash
-git config submodule.current/fadhlur.url https://github.com/SuperBypassUdinnn/logika-ui-2026-notebook-experiment.git
+git config submodule.notebooks/current/fadhlur.url https://github.com/SuperBypassUdinnn/logika-ui-2026-notebook-experiment.git
 git submodule update --init --recursive
 ```
 
@@ -91,13 +91,13 @@ from evaluate_ks import ks_score
    `submission.csv`) lalu taruh di `outputs/experiments/expXXX/` di repo
    dan catat ledger seperti Opsi A.
 7. Notebook yang bagus di-push ke repo notebook masing-masing
-   (`scripts/kaggle_sync.py`, bagian 5) agar masuk `current/<nama>/`.
+   (`scripts/kaggle_sync.py`, bagian 5) agar masuk `notebooks/current/<nama>/`.
 
-## 5. Folder `current/` per anggota
+## 5. Folder `notebooks/current/` per anggota
 
-- `current/fadhlur/` sudah submodule aktif
+- `notebooks/current/fadhlur/` sudah submodule aktif
   (Kaggle `fadhlurrahmanalaudin/logika-ui-2026-notebook-experiment`).
-- `current/farhan/` dan `current/ilham/` masih placeholder.
+- `notebooks/current/farhan/` dan `notebooks/current/ilham/` masih placeholder.
 
 Untuk Farhan (`C4R4MeL`)/Ilham (`MuhIlham420`) setelah kernel Kaggle dibuat:
 
@@ -106,8 +106,8 @@ Untuk Farhan (`C4R4MeL`)/Ilham (`MuhIlham420`) setelah kernel Kaggle dibuat:
 # 2. Buat repo notebook GitHub masing-masing, minta owner pasang deploy key
 #    read-only untuk CI (1 key per repo)
 # 3. Minta owner menambahkan submodule (pakai URL SSH agar CI bisa clone):
-git submodule add git@github.com:<org>/<notebook-repo>.git current/farhan
-# 4. Isi kaggle_slug + github_repo di current/members.json
+git submodule add git@github.com:<org>/<notebook-repo>.git notebooks/current/farhan
+# 4. Isi kaggle_slug + github_repo di notebooks/current/members.json
 python scripts/kaggle_sync.py --member farhan --pull
 ```
 
@@ -115,7 +115,7 @@ Sinkron harian:
 
 ```bash
 python scripts/kaggle_sync.py --member <nama> --pull
-git add current/<nama> && git commit -m "sync(current): ..."
+git add notebooks/current/<nama> && git commit -m "sync(current): ..."
 ```
 
 ## 6. Alur eksperimen (berlaku dua opsi)

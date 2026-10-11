@@ -52,7 +52,7 @@ ssh -T git@github.com
 Tanpa SSH key, paksa submodule lewat HTTPS (lokal saja):
 
 ```bash
-git config submodule.current/fadhlur.url https://github.com/SuperBypassUdinnn/logika-ui-2026-notebook-experiment.git
+git config submodule.notebooks/current/fadhlur.url https://github.com/SuperBypassUdinnn/logika-ui-2026-notebook-experiment.git
 git submodule update --init --recursive
 ```
 
@@ -86,7 +86,7 @@ install `lightgbm`, bawa `src/` sebagai dataset, Save Version, download
 hasil ke `outputs/experiments/expXXX/`. Tidak perlu Python lokal sama sekali.
 
 Jika `kaggle kernels pull` gagal di Windows (path), pull manual dari web
-Kaggle lalu copy file ke `current/<nama>/`.
+Kaggle lalu copy file ke `notebooks/current/<nama>/`.
 
 ## 4. Troubleshooting Windows
 
