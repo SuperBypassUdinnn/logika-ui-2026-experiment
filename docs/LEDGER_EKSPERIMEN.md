@@ -50,6 +50,9 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp043 | 2026-10-11 | Kolom account + x_income_vs_observed, ES-KS (eval KS ≈ AUC) | 0.5028 | 0.496-0.517 | - | done | outputs/experiments/fadhlur/exp043/log.md |
 | fadhlur/exp044 | 2026-10-11 | Active-loan burden + rasio beban (186 fitur) | 0.5051 | 0.498-0.518 | - | done | outputs/experiments/fadhlur/exp044/log.md |
 | fadhlur/exp045 | 2026-10-11 | Bureau lintas aplikasi + z-delta | 0.5056 | - | - | done | outputs/experiments/fadhlur/exp045/log.md |
+| fadhlur/exp046 | 2026-10-11 | XGBoost di 186 fitur | 0.5018 | - | - | done | outputs/experiments/fadhlur/exp046/log.md |
+| fadhlur/exp047 | 2026-10-11 | CatBoost 186 fitur | 0.5058 | - | - | done | outputs/experiments/fadhlur/exp047/log.md |
+| fadhlur/exp048 | 2026-10-11 | Blend 40/25/20/15 farhan+LGBM+XGB+CAT | 0.5088 | - | - | done | outputs/experiments/fadhlur/exp048/log.md |
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
