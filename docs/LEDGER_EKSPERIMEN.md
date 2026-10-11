@@ -1,6 +1,7 @@
 # Ledger Eksperimen (Bahasa Indonesia)
 
-Satu baris per eksperimen. Kolom: ID | Tanggal | Fitur/Model | OOF KS | Fold KS | LB | Status | Log.
+Satu baris per eksperimen. ID = path notebook
+(misal `fadhlur/exp001`). Kolom: ID | Tanggal | Fitur/Model | OOF KS | Fold KS | LB | Status | Log.
 
 | ID | Tanggal | Fitur/Model | OOF KS | Fold KS | LB | Status | Log |
 |:---|:---|:---|:---:|:---|:---:|:---:|:---|

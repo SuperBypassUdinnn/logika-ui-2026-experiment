@@ -41,6 +41,13 @@ Notebook boleh dipakai untuk EDA dan narasi, tapi logika tetap di `src/`:
 4. Commit keduanya (`.ipynb` + `.py`), output dipertahankan.
 5. Cek: `ruff check` pada `.py` pasangan sebelum PR.
 
+## Aturan nama notebook (anti-bentrok)
+
+- Eksperimen per anggota: `notebooks/experiments/<member>/expNNN_<slug>.ipynb`.
+- EDA: `notebooks/eda/<member>_<topik>.ipynb`.
+- Submission bersama: `notebooks/submissions/subXX_<slug>.ipynb`,
+  nomor diterbitkan leader. Detail: `notebooks/README.md`.
+
 ## Peran
 
 - Farhan (leader): final merge + submission.
