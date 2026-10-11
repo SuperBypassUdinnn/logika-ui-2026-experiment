@@ -28,3 +28,6 @@ Thumbs.db
 
 # Kaggle credentials
 .kaggle/
+
+# Local developer tooling
+.codegraph/

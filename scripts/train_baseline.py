@@ -23,7 +23,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from evaluate_ks import fold_ks
+from evaluate_ks import fold_ks, ks_score
 from model import make_lgbm
 from utils import ensure_dir, seed_all
 
@@ -74,6 +74,11 @@ def run_experiment(
                 train.loc[tr, features],
                 y[tr],
                 eval_set=[(train.loc[~tr, features], y[~tr])],
+                eval_metric=lambda yt, yp: (
+                    "ks",
+                    ks_score(np.asarray(yt), np.asarray(yp)),
+                    True,
+                ),
                 callbacks=[lgb.early_stopping(early_stopping, verbose=False)],
             )
         else:
