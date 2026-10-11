@@ -95,8 +95,20 @@ def agg_prev(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "prev_n_rejected": g["decision"].apply(lambda s: (s == "rejected").sum()),
             "prev_requested_sum": g["requested_amount"].sum(),
             "prev_approved_sum": g["approved_amount"].sum(),
+            "prev_days_since_last": g.apply(
+                lambda d: (d["cutoff"].iloc[0] - d["decision_datetime"].max()).days
+            ),
+            "prev_approval_rate": g["decision"].apply(
+                lambda s: (s == "approved").mean()
+            ),
         }
     ).reset_index()
+    last_dec = (
+        m.sort_values("decision_datetime")
+        .groupby("application_id")
+        .tail(1)[["application_id", "decision"]]
+    ).rename(columns={"decision": "prev_last_decision"})
+    out = out.merge(last_dec, on="application_id", how="left")
     return out
 
 
@@ -121,6 +133,12 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = with_cutoff(rep, apps)
     m = m[m["due_date"] < m[CUTOFF]]
     m["overdue"] = (m["days_past_due"] > 0).astype("int8")
+    m["dpd_band"] = pd.cut(
+        m["days_past_due"], [-1, 0, 30, 90, 10**9], labels=["ok", "mild", "bad", "severe"]
+    )
+    m["cured"] = ((m["days_past_due"] > 0) & (m["amount_paid"] >= m["amount_due"])).astype(
+        "int8"
+    )
     m["recent"] = (m["due_date"] >= m[CUTOFF] - pd.Timedelta(days=90)).astype("int8")
     g = m.groupby("application_id")
     out = pd.DataFrame(
@@ -130,6 +148,10 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_paid_sum": g["amount_paid"].sum(),
             "repay_dpd_max": g["days_past_due"].max(),
             "repay_overdue_n": g["overdue"].sum(),
+            "repay_mild_n": g["dpd_band"].apply(lambda s: (s == "mild").sum()),
+            "repay_bad_n": g["dpd_band"].apply(lambda s: (s == "bad").sum()),
+            "repay_severe_n": g["dpd_band"].apply(lambda s: (s == "severe").sum()),
+            "repay_cured_n": g["cured"].sum(),
             "repay_recent_n": g["recent"].sum(),
             "repay_recent_dpd_max": g.apply(
                 lambda d: (
@@ -216,6 +238,8 @@ def agg_account(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "acct_inflows_sum": g["inflows"].sum(),
             "acct_outflows_sum": g["outflows"].sum(),
             "acct_low_days_sum": g["low_balance_days"].sum(),
+            "acct_closing_std": g["closing_balance"].std(),
+            "acct_closing_min": g["closing_balance"].min(),
         }
     ).reset_index()
 
