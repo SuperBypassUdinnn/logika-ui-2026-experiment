@@ -7,5 +7,6 @@ Satu baris per eksperimen. ID = path notebook
 |:---|:---|:---|:---:|:---|:---:|:---:|:---|
 | exp000 | - | baseline mean 0.125 | - | - | - | planned | - |
 | fadhlur/exp001 | 2026-10-11 | LightGBM default, 44 fitur join leakage-safe | 0.3823 | 0.379-0.397 | - | done | outputs/experiments/fadhlur/exp001/log.md |
+| fadhlur/exp002 | 2026-10-11 | Tuning 12 cfg, best lr0.03 leaves31 min100 n200 | 0.3853 | 0.377-0.402 | - | done | outputs/experiments/fadhlur/exp002/log.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.
