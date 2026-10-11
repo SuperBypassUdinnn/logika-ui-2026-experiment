@@ -64,12 +64,12 @@ nb.cells = [
     nbf.v4.new_code_cell(
         "import os\n"
         "CANDIDATES = [\n"
-        "    \"/kaggle/input/competitions/data-science-competition-logika-ui-2026\",\n"
-        "    \"/kaggle/input/data-science-competition-logika-ui-2026\",\n"
+        '    "/kaggle/input/competitions/data-science-competition-logika-ui-2026",\n'
+        '    "/kaggle/input/data-science-competition-logika-ui-2026",\n'
         "]\n"
         "def find_data():\n"
         "    for c in CANDIDATES:\n"
-        "        if os.path.isfile(os.path.join(c, \"train_applications.csv\")):\n"
+        '        if os.path.isfile(os.path.join(c, "train_applications.csv")):\n'
         "            return c\n"
         '    for root in ["/kaggle/input", "data"]:\n'
         "        if not os.path.isdir(root):\n"
