@@ -13,6 +13,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp007 | 2026-10-11 | Model per segmen histori/tanpa (negatif) | 0.3871 | 0.379-0.401 | - | done | outputs/experiments/fadhlur/exp007/log.md |
 | fadhlur/exp008 | 2026-10-11 | Single model + flag segmen histori | 0.3910 | 0.381-0.404 | - | done | outputs/experiments/fadhlur/exp008/log.md |
 | fadhlur/exp009 | 2026-10-11 | Episode DPD band + prev recency + volatilitas saldo (74 fitur) | 0.3926 | 0.384-0.404 | - | done | outputs/experiments/fadhlur/exp009/log.md |
+| fadhlur/exp010 | 2026-10-11 | Long-train n1000 lr0.02 (negatif, overfit) | 0.3905 | 0.380-0.404 | - | done | outputs/experiments/fadhlur/exp010/log.md |
 | fadhlur/exp004 | - | Interaksi rate + bureau per-provider | - | - | - | planned | docs/STRATEGI_AWAL.md |
 | fadhlur/exp005 | - | Perilaku ecommerce | - | - | - | planned | docs/STRATEGI_AWAL.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
