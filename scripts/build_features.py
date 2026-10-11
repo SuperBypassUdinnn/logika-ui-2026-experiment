@@ -194,6 +194,7 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         data / "bureau_observations.csv",
         usecols=[
             "application_id",
+            "bureau_provider",
             "report_datetime",
             "available_datetime",
             "score",
@@ -219,6 +220,23 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "bureau_delinq_max": g["delinquent_accounts_last_12m"].max(),
         }
     ).reset_index()
+    per_provider = (
+        m.groupby(["application_id", "bureau_provider"])
+        .agg(
+            n=("score", "size"),
+            score_min=("score", "min"),
+            outstanding=("outstanding_balance", "sum"),
+            delinq=("delinquent_accounts_last_12m", "max"),
+        )
+        .reset_index()
+    )
+    wide = per_provider.pivot(index="application_id", columns="bureau_provider").fillna(
+        0
+    )
+    wide.columns = [
+        f"bureau_{prov}_{metric}" for metric, prov in wide.columns.to_flat_index()
+    ]
+    out = out.merge(wide.reset_index(), on="application_id", how="left")
     return out
 
 
@@ -279,6 +297,11 @@ def main() -> None:
     feat["loan_to_income"] = feat["loan_amount"] / feat["declared_monthly_income"].clip(
         lower=1
     )
+    feat["installment_to_income"] = feat["proposed_monthly_installment"] / feat[
+        "declared_monthly_income"
+    ].clip(lower=1)
+    feat["rate_x_loan"] = feat["annual_interest_rate"] * feat["loan_amount"]
+    feat["rate_x_term"] = feat["annual_interest_rate"] * feat["term_months"]
     feat["decision_month"] = feat[CUTOFF].dt.month.astype("int8")
     feat["decision_weekday"] = feat[CUTOFF].dt.weekday.astype("int8")
 
