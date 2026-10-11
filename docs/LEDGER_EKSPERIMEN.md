@@ -15,6 +15,10 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp008 | 2026-10-11 | Single model + flag segmen histori | 0.3910 | 0.381-0.404 | - | done | outputs/experiments/fadhlur/exp008/log.md |
 | fadhlur/exp009 | 2026-10-11 | Episode DPD band + prev recency + volatilitas saldo (74 fitur) | 0.3926 | 0.384-0.404 | - | done | outputs/experiments/fadhlur/exp009/log.md |
 | fadhlur/exp010 | 2026-10-11 | Long-train n1000 lr0.02 (negatif, overfit) | 0.3905 | 0.380-0.404 | - | done | outputs/experiments/fadhlur/exp010/log.md |
+| fadhlur/exp011 | 2026-10-11 | scale_pos_weight 3 | 0.3945 | 0.388-0.412 | - | done | outputs/experiments/fadhlur/exp011/log.md |
+| fadhlur/exp012 | 2026-10-11 | Drop 15 fitur gain-rendah (negatif) | 0.3908 | 0.383-0.411 | - | done | outputs/experiments/fadhlur/exp012/log.md |
+| fadhlur/exp013 | 2026-10-11 | XGBoost mirror setup LGBM | 0.3949 | 0.388-0.406 | - | done | outputs/experiments/fadhlur/exp013/log.md |
+| fadhlur/exp014 | 2026-10-11 | Blend 60/40 exp011+exp013 | 0.3964 | - | - | done | outputs/experiments/fadhlur/exp014/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.
