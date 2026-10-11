@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 CUTOFF = "decision_datetime"
@@ -120,6 +121,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = with_cutoff(rep, apps)
     m = m[m["due_date"] < m[CUTOFF]]
     m["overdue"] = (m["days_past_due"] > 0).astype("int8")
+    m["recent"] = (m["due_date"] >= m[CUTOFF] - pd.Timedelta(days=90)).astype("int8")
     g = m.groupby("application_id")
     out = pd.DataFrame(
         {
@@ -128,9 +130,32 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_paid_sum": g["amount_paid"].sum(),
             "repay_dpd_max": g["days_past_due"].max(),
             "repay_overdue_n": g["overdue"].sum(),
+            "repay_recent_n": g["recent"].sum(),
+            "repay_recent_dpd_max": g.apply(
+                lambda d: (
+                    d.loc[d["recent"] == 1, "days_past_due"].max()
+                    if (d["recent"] == 1).any()
+                    else np.nan
+                )
+            ),
+            "repay_recent_paid_sum": g.apply(
+                lambda d: (d["amount_paid"] * d["recent"]).sum()
+            ),
+            "repay_recent_due_sum": g.apply(
+                lambda d: (d["amount_due"] * d["recent"]).sum()
+            ),
         }
     ).reset_index()
     out["repay_pay_ratio"] = out["repay_paid_sum"] / out["repay_due_sum"].clip(lower=1)
+    out["repay_recent_pay_ratio"] = out["repay_recent_paid_sum"] / out[
+        "repay_recent_due_sum"
+    ].clip(lower=1)
+    last = (
+        m.sort_values("due_date")
+        .groupby("application_id")
+        .tail(1)[["application_id", "days_past_due"]]
+    ).rename(columns={"days_past_due": "repay_last_dpd"})
+    out = out.merge(last, on="application_id", how="left")
     return out
 
 

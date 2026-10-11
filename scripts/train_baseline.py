@@ -1,8 +1,9 @@
-"""Stratified 5-fold LightGBM baseline producing ledger-ready artifacts.
+"""Stratified 5-fold LightGBM producing ledger-ready artifacts.
 
 Usage:
     python scripts/make_folds.py --input data/train_applications.csv --out train_folds.csv
-    python scripts/train_baseline.py --member fadhlur --exp exp001
+    python scripts/train_baseline.py --member fadhlur --exp exp003 \
+        --params '{"n_estimators": 200, "learning_rate": 0.03, "num_leaves": 31, "min_child_samples": 100}'
 
 Outputs to outputs/experiments/<member>/<exp>/:
 oof.csv, test_pred.npy, submission.csv, log.md
@@ -11,6 +12,7 @@ oof.csv, test_pred.npy, submission.csv, log.md
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 from pathlib import Path
@@ -101,6 +103,7 @@ def main() -> None:
     ap.add_argument("--test", default="data/test_features.parquet")
     ap.add_argument("--folds", default="train_folds.csv")
     ap.add_argument("--out", default="outputs/experiments")
+    ap.add_argument("--params", default="{}")
     ap.add_argument("--seed", type=int, default=SEED)
     args = ap.parse_args()
 
@@ -109,10 +112,10 @@ def main() -> None:
         train,
         test,
         features,
-        {},
+        json.loads(args.params),
         args.seed,
         Path(args.out) / args.member / args.exp,
-        f"{args.member}/{args.exp} LightGBM baseline",
+        f"{args.member}/{args.exp}",
     )
 
 
