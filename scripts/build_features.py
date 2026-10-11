@@ -381,6 +381,8 @@ def main() -> None:
             )
         ):
             feat[c] = feat[c].fillna(0)
+    feat["has_repay_history"] = (feat["repay_n"] > 0).astype("int8")
+    feat["has_account_history"] = (feat["acct_n_months"] > 0).astype("int8")
 
     train = feat[feat["is_train"]].drop(columns=["is_train"])
     test = feat[~feat["is_train"]].drop(columns=["is_train", "target"])
