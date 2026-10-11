@@ -374,9 +374,16 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         ],
         parse_dates=["report_datetime", "available_datetime"],
     )
-    cut = apps[["application_id", CUTOFF]]
+    cut = apps[["application_id", CUTOFF, "is_train"]]
     m = bur.merge(cut, on="application_id", how="inner")
     m = m[m["available_datetime"] <= m[CUTOFF]]
+    prov_stats = (
+        m[m["is_train"]].groupby("bureau_provider")["score"].agg(["mean", "std"]).reset_index()
+    )
+    prov_map = prov_stats.set_index("bureau_provider")
+    m["score_z"] = (m["score"] - m["bureau_provider"].map(prov_map["mean"])) / m[
+        "bureau_provider"
+    ].map(prov_map["std"]).replace(0, np.nan)
     g = m.groupby("application_id")
     out = pd.DataFrame(
         {
@@ -430,6 +437,9 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     out["bureau_score_spread"] = spread["max"] - spread["min"]
     out["bureau_n_providers"] = spread["count"]
     out["bureau_score_nmiss"] = 3 - spread["count"]
+    gz = m.groupby("application_id")["score_z"]
+    out["bureau_z_mean"] = gz.mean().reindex(out["application_id"]).to_numpy()
+    out["bureau_z_min"] = gz.min().reindex(out["application_id"]).to_numpy()
     last_rep = (
         m.groupby("application_id")["available_datetime"]
         .max()
@@ -548,6 +558,21 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items = items.merge(last_txn, on="application_id", how="left")
     items["eco_days_since_txn"] = (items["cutoff"] - items["last_txn"]).dt.days
     items = items.drop(columns=["last_txn", "cutoff"])
+
+    def gap_stats(d):
+        t = d.sort_values("transaction_datetime")["transaction_datetime"]
+        if len(t) < 2:
+            return pd.Series({"eco_gap_mean": np.nan, "eco_n_gaps": 0})
+        gaps = t.diff().dt.days.dropna()
+        return pd.Series({"eco_gap_mean": float(gaps.mean()), "eco_n_gaps": len(gaps)})
+
+    items = items.merge(
+        m.groupby("application_id")[["transaction_datetime"]]
+        .apply(gap_stats)
+        .reset_index(),
+        on="application_id",
+        how="left",
+    )
     return orders.merge(items, on="application_id", how="outer")
 
 

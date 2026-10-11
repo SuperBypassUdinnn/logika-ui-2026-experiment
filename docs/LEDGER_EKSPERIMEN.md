@@ -37,6 +37,14 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp030 | 2026-10-11 | Blend 40/30/30 (027+028+029) | 0.4987 | - | - | done | outputs/experiments/fadhlur/exp030/log.md |
 | fadhlur/exp031 | 2026-10-11 | Retune min_child 20 di 133 fitur | 0.4984 | - | - | done | outputs/experiments/fadhlur/exp031/log.md |
 | fadhlur/exp032 | 2026-10-11 | Blend 40/30/30 (031+028+029) | 0.4990 | - | - | done | outputs/experiments/fadhlur/exp032/log.md |
+| fadhlur/exp033 | 2026-10-11 | Streak + nmiss bureau (datar) | 0.4984 | - | - | done | outputs/experiments/fadhlur/exp033/log.md |
+| fadhlur/exp034 | 2026-10-11 | Agregat recency-weighted | 0.4978 | - | - | done | outputs/experiments/fadhlur/exp034/log.md |
+| fadhlur/exp036 | 2026-10-11 | late_ratio + overdue_amt_ratio | 0.4971 | - | - | done | outputs/experiments/fadhlur/exp036/log.md |
+| fadhlur/exp037 | 2026-10-11 | Gap order + z-score bureau (146 fitur) | 0.5003 | 0.487-0.512 | - | done | outputs/experiments/fadhlur/exp037/log.md |
+| fadhlur/exp038 | 2026-10-11 | XGBoost di 146 fitur | 0.4983 | - | - | done | outputs/experiments/fadhlur/exp038/log.md |
+| fadhlur/exp039 | 2026-10-11 | CatBoost 146 fitur | 0.4994 | - | - | done | outputs/experiments/fadhlur/exp039/log.md |
+| farhan/exp-final | 2026-10-11 | Repro notebook farhan (OOF referensi) | 0.5050 | 0.482-0.519 | 0.53221 | done | outputs/experiments/farhan/exp-final/log.md |
+| fadhlur/exp040 | 2026-10-11 | Blend 55/20/15/10 farhan+LGBM+XGB+CAT | 0.5056 | 0.495-0.518 | - | done | outputs/experiments/fadhlur/exp040/log.md |
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
