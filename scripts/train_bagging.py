@@ -13,6 +13,7 @@ import sys
 import time
 from pathlib import Path
 
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
 
@@ -34,6 +35,7 @@ def main() -> None:
     ap.add_argument("--folds", default="train_folds.csv")
     ap.add_argument("--out", default="outputs/experiments")
     ap.add_argument("--params", default="{}")
+    ap.add_argument("--early-stopping", type=int, default=0)
     ap.add_argument("--seeds", nargs="+", type=int, default=[42, 43, 44])
     args = ap.parse_args()
     params = json.loads(args.params)
@@ -49,7 +51,17 @@ def main() -> None:
         for fold in sorted(train["fold"].unique()):
             tr = train["fold"] != fold
             model = make_lgbm(seed=seed, **params)
-            model.fit(train.loc[tr, features], y[tr])
+            if args.early_stopping > 0:
+                model.fit(
+                    train.loc[tr, features],
+                    y[tr],
+                    eval_set=[(train.loc[~tr, features], y[~tr])],
+                    callbacks=[
+                        lgb.early_stopping(args.early_stopping, verbose=False)
+                    ],
+                )
+            else:
+                model.fit(train.loc[tr, features], y[tr])
             oof[~tr] += model.predict_proba(train.loc[~tr, features])[:, 1]
             test_pred += (
                 model.predict_proba(test[features])[:, 1]
