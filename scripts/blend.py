@@ -48,7 +48,8 @@ def main() -> None:
     test_pred = sum(w * t for w, t in zip(args.weights, tests))
     if args.rank:
         oof = sum(
-            w * pd.Series(o).rank(pct=True).to_numpy() for w, o in zip(args.weights, oofs)
+            w * pd.Series(o).rank(pct=True).to_numpy()
+            for w, o in zip(args.weights, oofs)
         )
         test_pred = sum(
             w * pd.Series(t).rank(pct=True).to_numpy()

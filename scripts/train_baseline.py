@@ -56,8 +56,9 @@ def load_data(train_path: str, test_path: str, folds_path: str, drop_extra=()):
     return train, test, features
 
 
-def run_experiment(train, test, features, params, seed, outdir, title,
-                   early_stopping=0):
+def run_experiment(
+    train, test, features, params, seed, outdir, title, early_stopping=0
+):
     seed_all(seed)
     y = train[TARGET_COL].to_numpy()
     oof = np.zeros(len(train))

@@ -378,7 +378,10 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = bur.merge(cut, on="application_id", how="inner")
     m = m[m["available_datetime"] <= m[CUTOFF]]
     prov_stats = (
-        m[m["is_train"]].groupby("bureau_provider")["score"].agg(["mean", "std"]).reset_index()
+        m[m["is_train"]]
+        .groupby("bureau_provider")["score"]
+        .agg(["mean", "std"])
+        .reset_index()
     )
     prov_map = prov_stats.set_index("bureau_provider")
     m["score_z"] = (m["score"] - m["bureau_provider"].map(prov_map["mean"])) / m[
@@ -537,7 +540,11 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             .to_numpy()
         )
         items[f"eco_cnt_done_{w}d"] = (
-            wm_c.groupby("application_id").size().reindex(items["application_id"]).fillna(0).to_numpy()
+            wm_c.groupby("application_id")
+            .size()
+            .reindex(items["application_id"])
+            .fillna(0)
+            .to_numpy()
         )
         for cat in ("groceries", "fashion", "electronics", "personal_care"):
             items[f"eco_{cat}_{w}d"] = (
@@ -555,9 +562,7 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         items["eco_sum_done_365d"] / 4
     ).replace(0, np.nan)
     done = m[m["completed"] == 1].groupby("application_id")["order_total"]
-    items["eco_done_median"] = (
-        done.median().reindex(items["application_id"]).to_numpy()
-    )
+    items["eco_done_median"] = done.median().reindex(items["application_id"]).to_numpy()
     items["eco_done_std"] = done.std().reindex(items["application_id"]).to_numpy()
     n_items = m.groupby("application_id").size()
     items["eco_cancel_rate"] = (
