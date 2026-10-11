@@ -38,7 +38,7 @@ def load_matrix(path: Path) -> pd.DataFrame:
     return df
 
 
-def load_data(train_path: str, test_path: str, folds_path: str):
+def load_data(train_path: str, test_path: str, folds_path: str, drop_extra=()):
     train = load_matrix(Path(train_path))
     test = load_matrix(Path(test_path))
     folds = pd.read_csv(folds_path)
@@ -46,6 +46,7 @@ def load_data(train_path: str, test_path: str, folds_path: str):
     assert train["fold"].notna().all(), "missing folds, run make_folds.py first"
     drop = {ID_COL, TARGET_COL, "fold", "customer_id"}
     drop |= set(train.select_dtypes(include=["datetime64[ns]"]).columns)
+    drop |= set(drop_extra)
     features = [c for c in train.columns if c not in drop]
     return train, test, features
 
@@ -104,10 +105,12 @@ def main() -> None:
     ap.add_argument("--folds", default="train_folds.csv")
     ap.add_argument("--out", default="outputs/experiments")
     ap.add_argument("--params", default="{}")
+    ap.add_argument("--drop-cols", default="")
     ap.add_argument("--seed", type=int, default=SEED)
     args = ap.parse_args()
 
-    train, test, features = load_data(args.train, args.test, args.folds)
+    drop_extra = [c for c in args.drop_cols.split(",") if c]
+    train, test, features = load_data(args.train, args.test, args.folds, drop_extra)
     run_experiment(
         train,
         test,
