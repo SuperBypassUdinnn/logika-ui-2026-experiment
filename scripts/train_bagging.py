@@ -56,9 +56,7 @@ def main() -> None:
                     train.loc[tr, features],
                     y[tr],
                     eval_set=[(train.loc[~tr, features], y[~tr])],
-                    callbacks=[
-                        lgb.early_stopping(args.early_stopping, verbose=False)
-                    ],
+                    callbacks=[lgb.early_stopping(args.early_stopping, verbose=False)],
                 )
             else:
                 model.fit(train.loc[tr, features], y[tr])

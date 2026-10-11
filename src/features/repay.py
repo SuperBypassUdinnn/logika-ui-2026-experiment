@@ -116,9 +116,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     def loan_trend(d):
         d = d.sort_values("orig_date")
         if len(d) < 2 or d["orig_date"].isna().all():
-            return pd.Series(
-                {"repay_loan_dpd_trend": 0.0, "repay_loan_pay_trend": 0.0}
-            )
+            return pd.Series({"repay_loan_dpd_trend": 0.0, "repay_loan_pay_trend": 0.0})
         first = d.iloc[0]
         last = d.iloc[-1]
         return pd.Series(
