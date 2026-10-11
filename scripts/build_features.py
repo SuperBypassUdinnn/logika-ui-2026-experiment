@@ -527,14 +527,27 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items = items.merge(cat_wide.reset_index(), on="application_id", how="left")
     for w in (30, 90, 180, 365):
         wm = m[m["days_since"] <= w]
+        wm_c = wm[wm["completed"] == 1]
+        wm_c = wm[wm["completed"] == 1]
         items[f"eco_sum_done_{w}d"] = (
-            wm[wm["completed"] == 1]
-            .groupby("application_id")["order_total"]
+            wm_c.groupby("application_id")["order_total"]
             .sum()
             .reindex(items["application_id"])
             .fillna(0)
             .to_numpy()
         )
+        items[f"eco_cnt_done_{w}d"] = (
+            wm_c.groupby("application_id").size().reindex(items["application_id"]).fillna(0).to_numpy()
+        )
+        for cat in ("groceries", "fashion", "electronics", "personal_care"):
+            items[f"eco_{cat}_{w}d"] = (
+                wm_c[wm_c["product_category"] == cat]
+                .groupby("application_id")["spend"]
+                .sum()
+                .reindex(items["application_id"])
+                .fillna(0)
+                .to_numpy()
+            )
     items["eco_vel_30_180"] = items["eco_sum_done_30d"] / (
         items["eco_sum_done_180d"] / 6
     ).replace(0, np.nan)
@@ -573,6 +586,14 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         on="application_id",
         how="left",
     )
+    first_txn = (
+        m.groupby("application_id")
+        .agg(first_txn=("transaction_datetime", "min"), cutoff=(CUTOFF, "first"))
+        .reset_index()
+    )
+    items = items.merge(first_txn, on="application_id", how="left")
+    items["eco_tenure_days"] = (items["cutoff"] - items["first_txn"]).dt.days
+    items = items.drop(columns=["first_txn", "cutoff"])
     return orders.merge(items, on="application_id", how="outer")
 
 

@@ -45,6 +45,8 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp039 | 2026-10-11 | CatBoost 146 fitur | 0.4994 | - | - | done | outputs/experiments/fadhlur/exp039/log.md |
 | farhan/exp-final | 2026-10-11 | Repro notebook farhan (OOF referensi) | 0.5050 | 0.482-0.519 | 0.53221 | done | outputs/experiments/farhan/exp-final/log.md |
 | fadhlur/exp040 | 2026-10-11 | Blend 55/20/15/10 farhan+LGBM+XGB+CAT | 0.5056 | 0.495-0.518 | - | done | outputs/experiments/fadhlur/exp040/log.md |
+| fadhlur/exp041 | 2026-10-11 | Eco kategori×recency + tenure (167 fitur) | 0.5039 | 0.488-0.518 | - | done | outputs/experiments/fadhlur/exp041/log.md |
+| fadhlur/exp042 | 2026-10-11 | Blend 70/30 farhan+exp041 | 0.5061 | - | - | done | outputs/experiments/fadhlur/exp042/log.md |
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
