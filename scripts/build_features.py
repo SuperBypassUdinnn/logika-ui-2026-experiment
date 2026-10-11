@@ -1,0 +1,297 @@
+"""Build leakage-safe application-level features for all tables.
+
+Every auxiliary row is used only if its event timestamp is strictly
+before the scored application's decision_datetime (bureau uses
+available_datetime <= decision_datetime).
+
+Usage:
+    python scripts/build_features.py --data data \
+        --out-train data/train_features.parquet \
+        --out-test data/test_features.parquet
+
+Outputs are ignored by git (data/*.parquet); they are regenerable.
+"""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import pandas as pd
+
+CUTOFF = "decision_datetime"
+
+
+def scored_apps(data: Path) -> pd.DataFrame:
+    train = pd.read_csv(
+        data / "train_applications.csv",
+        usecols=[
+            "application_id",
+            "customer_id",
+            "decision_datetime",
+            "loan_amount",
+            "term_months",
+            "annual_interest_rate",
+            "proposed_monthly_installment",
+            "loan_purpose",
+            "target",
+        ],
+        parse_dates=["decision_datetime"],
+    )
+    train["is_train"] = True
+    test = pd.read_csv(
+        data / "test_applications.csv",
+        usecols=[
+            "application_id",
+            "customer_id",
+            "decision_datetime",
+            "loan_amount",
+            "term_months",
+            "annual_interest_rate",
+            "proposed_monthly_installment",
+            "loan_purpose",
+        ],
+        parse_dates=["decision_datetime"],
+    )
+    test["is_train"] = False
+    return pd.concat([train, test], ignore_index=True)
+
+
+def with_cutoff(aux: pd.DataFrame, apps: pd.DataFrame) -> pd.DataFrame:
+    cut = apps[["customer_id", "application_id", CUTOFF]]
+    return aux.merge(cut, on="customer_id", how="inner")
+
+
+def agg_prev(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
+    prev = pd.read_csv(
+        data / "previous_applications.csv",
+        usecols=[
+            "application_id",
+            "customer_id",
+            "decision_datetime",
+            "requested_amount",
+            "decision",
+            "approved_amount",
+        ],
+        parse_dates=["decision_datetime"],
+    ).rename(columns={"application_id": "hist_app_id"})
+    m = prev.merge(
+        apps[["customer_id", "application_id", CUTOFF]].rename(
+            columns={CUTOFF: "cutoff"}
+        ),
+        on="customer_id",
+        how="inner",
+    )
+    m = m[
+        (m["hist_app_id"] != m["application_id"])
+        & (m["decision_datetime"] < m["cutoff"])
+    ]
+    g = m.groupby("application_id")
+    out = pd.DataFrame(
+        {
+            "prev_n": g.size(),
+            "prev_n_approved": g["decision"].apply(lambda s: (s == "approved").sum()),
+            "prev_n_rejected": g["decision"].apply(lambda s: (s == "rejected").sum()),
+            "prev_requested_sum": g["requested_amount"].sum(),
+            "prev_approved_sum": g["approved_amount"].sum(),
+        }
+    ).reset_index()
+    return out
+
+
+def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
+    loan_customer = pd.read_csv(
+        data / "previous_applications.csv",
+        usecols=["loan_id", "customer_id"],
+    ).dropna(subset=["loan_id"])
+    loan_customer = loan_customer.drop_duplicates("loan_id")
+    rep = pd.read_csv(
+        data / "repayment_history.csv",
+        usecols=[
+            "loan_id",
+            "due_date",
+            "amount_due",
+            "amount_paid",
+            "days_past_due",
+        ],
+        parse_dates=["due_date"],
+    )
+    rep = rep.merge(loan_customer, on="loan_id", how="inner")
+    m = with_cutoff(rep, apps)
+    m = m[m["due_date"] < m[CUTOFF]]
+    m["overdue"] = (m["days_past_due"] > 0).astype("int8")
+    g = m.groupby("application_id")
+    out = pd.DataFrame(
+        {
+            "repay_n": g.size(),
+            "repay_due_sum": g["amount_due"].sum(),
+            "repay_paid_sum": g["amount_paid"].sum(),
+            "repay_dpd_max": g["days_past_due"].max(),
+            "repay_overdue_n": g["overdue"].sum(),
+        }
+    ).reset_index()
+    out["repay_pay_ratio"] = out["repay_paid_sum"] / out["repay_due_sum"].clip(lower=1)
+    return out
+
+
+def agg_account(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
+    acc = pd.read_csv(
+        data / "account_behavior.csv",
+        usecols=[
+            "customer_id",
+            "month",
+            "closing_balance",
+            "inflows",
+            "outflows",
+            "low_balance_days",
+        ],
+        parse_dates=["month"],
+    )
+    m = with_cutoff(acc, apps)
+    m = m[
+        m["month"] < m[CUTOFF].values.astype("datetime64[M]").astype("datetime64[ns]")
+    ]
+    g = m.groupby("application_id")
+    out = pd.DataFrame(
+        {
+            "acct_n_months": g.size(),
+            "acct_closing_mean": g["closing_balance"].mean(),
+            "acct_inflows_sum": g["inflows"].sum(),
+            "acct_outflows_sum": g["outflows"].sum(),
+            "acct_low_days_sum": g["low_balance_days"].sum(),
+        }
+    ).reset_index()
+    return out
+
+
+def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
+    bur = pd.read_csv(
+        data / "bureau_observations.csv",
+        usecols=[
+            "application_id",
+            "report_datetime",
+            "available_datetime",
+            "score",
+            "outstanding_balance",
+            "utilization",
+            "inquiries_last_6m",
+            "delinquent_accounts_last_12m",
+        ],
+        parse_dates=["report_datetime", "available_datetime"],
+    )
+    cut = apps[["application_id", CUTOFF]]
+    m = bur.merge(cut, on="application_id", how="inner")
+    m = m[m["available_datetime"] <= m[CUTOFF]]
+    g = m.groupby("application_id")
+    out = pd.DataFrame(
+        {
+            "bureau_n": g.size(),
+            "bureau_score_min": g["score"].min(),
+            "bureau_score_mean": g["score"].mean(),
+            "bureau_outstanding_sum": g["outstanding_balance"].sum(),
+            "bureau_util_mean": g["utilization"].mean(),
+            "bureau_inq_sum": g["inquiries_last_6m"].sum(),
+            "bureau_delinq_max": g["delinquent_accounts_last_12m"].max(),
+        }
+    ).reset_index()
+    return out
+
+
+def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
+    eco = pd.read_csv(
+        data / "ecommerce_transactions.csv",
+        usecols=[
+            "order_id",
+            "customer_id",
+            "transaction_datetime",
+            "product_category",
+            "quantity",
+            "item_total",
+            "order_total",
+            "payment_method",
+            "order_status",
+        ],
+        parse_dates=["transaction_datetime"],
+    )
+    m = with_cutoff(eco, apps)
+    m = m[m["transaction_datetime"] < m[CUTOFF]]
+    m["completed"] = (m["order_status"] == "completed").astype("int8")
+    m["spend"] = m["item_total"] * m["completed"]
+    orders = (
+        m.drop_duplicates(["application_id", "order_id"])
+        .groupby("application_id")
+        .agg(
+            eco_n_orders=("order_id", "size"),
+            eco_order_total_sum=("order_total", "sum"),
+        )
+        .reset_index()
+    )
+    g = m.groupby("application_id")
+    items = pd.DataFrame(
+        {
+            "eco_spend_sum": g["spend"].sum(),
+            "eco_qty_sum": g["quantity"].sum(),
+            "eco_n_cancelled": g["completed"].apply(lambda s: (s == 0).sum()),
+            "eco_n_categories": g["product_category"].nunique(),
+        }
+    ).reset_index()
+    return orders.merge(items, on="application_id", how="outer")
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--data", default="data")
+    ap.add_argument("--out-train", default="data/train_features.parquet")
+    ap.add_argument("--out-test", default="data/test_features.parquet")
+    args = ap.parse_args()
+    data = Path(args.data)
+
+    apps = scored_apps(data)
+    print(f"scored apps: {len(apps)}")
+
+    profile = pd.read_csv(data / "customer_profiles.csv")
+    feat = apps.merge(profile, on="customer_id", how="left")
+    feat["loan_to_income"] = feat["loan_amount"] / feat["declared_monthly_income"].clip(
+        lower=1
+    )
+    feat["decision_month"] = feat[CUTOFF].dt.month.astype("int8")
+    feat["decision_weekday"] = feat[CUTOFF].dt.weekday.astype("int8")
+
+    for name, fn in [
+        ("prev", agg_prev),
+        ("repay", agg_repay),
+        ("account", agg_account),
+        ("bureau", agg_bureau),
+        ("eco", agg_eco),
+    ]:
+        part = fn(data, apps)
+        print(f"{name}: {len(part)} applications with history")
+        feat = feat.merge(part, on="application_id", how="left")
+
+    for c in feat.columns:
+        if c.startswith(
+            (
+                "prev_n",
+                "repay_n",
+                "repay_overdue_n",
+                "acct_n_months",
+                "bureau_n",
+                "eco_n_orders",
+                "eco_n_cancelled",
+                "prev_n_approved",
+                "prev_n_rejected",
+            )
+        ):
+            feat[c] = feat[c].fillna(0)
+
+    train = feat[feat["is_train"]].drop(columns=["is_train"])
+    test = feat[~feat["is_train"]].drop(columns=["is_train", "target"])
+    train.to_parquet(args.out_train, index=False)
+    test.to_parquet(args.out_test, index=False)
+    print(f"train {train.shape} -> {args.out_train}")
+    print(f"test {test.shape} -> {args.out_test}")
+    print(f"train positive rate: {train['target'].mean():.4f}")
+
+
+if __name__ == "__main__":
+    main()

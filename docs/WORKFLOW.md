@@ -21,13 +21,25 @@ Dokumen ini hasil penyempurnaan dari workflow lomba vision lama.
 ## Alur baku
 
 1. Buat fold: `python scripts/make_folds.py`
-2. Kembangkan fitur di `src/features.py` dengan cutoff `decision_datetime`.
-3. Eksperimen lokal full (laptop sanggup 5-7GB peak): train LightGBM 5-fold.
-4. Simpan ke `outputs/experiments/expXXX/` (`oof.csv`, `test_pred.npy`, `submission.csv`, `log.md`).
-5. Tambah satu baris ke `docs/LEDGER_EKSPERIMEN.md` di PR yang sama.
-6. Audit: `python scripts/audit_submission.py outputs/.../submission.csv --oof outputs/.../oof.csv`
-7. Minta persetujuan user, submit maksimal 3/hari.
-8. Sinkron `current/<nama>/` via `scripts/kaggle_sync.py` + PR harian.
+2. Bangun fitur: `python scripts/build_features.py` (join leakage-safe
+   semua 7 tabel bantu ke `data/*_features.parquet`, otomatis ter-ignore).
+3. Kembangkan fitur di `src/features.py` dengan cutoff `decision_datetime`.
+4. Eksperimen lokal full (laptop sanggup 5-7GB peak): train LightGBM 5-fold.
+5. Simpan ke `outputs/experiments/expXXX/` (`oof.csv`, `test_pred.npy`, `submission.csv`, `log.md`).
+6. Tambah satu baris ke `docs/LEDGER_EKSPERIMEN.md` di PR yang sama.
+7. Audit: `python scripts/audit_submission.py outputs/.../submission.csv --oof outputs/.../oof.csv`
+8. Minta persetujuan user, submit maksimal 3/hari.
+9. Sinkron `current/<nama>/` via `scripts/kaggle_sync.py` + PR harian.
+
+## Aturan notebook (adopsi skill notebook-workflow)
+
+Notebook boleh dipakai untuk EDA dan narasi, tapi logika tetap di `src/`:
+
+1. Pairing sekali: `jupytext --set-formats ipynb,py:percent <notebook.ipynb>`
+2. Edit file `.py` pasangan (batas sel `# %%`), jangan edit JSON `.ipynb`.
+3. Sinkron: `jupytext --sync`, eksekusi penuh `jupyter nbconvert --execute`.
+4. Commit keduanya (`.ipynb` + `.py`), output dipertahankan.
+5. Cek: `ruff check` pada `.py` pasangan sebelum PR.
 
 ## Peran
 
