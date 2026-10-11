@@ -19,6 +19,8 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp013 | 2026-10-11 | XGBoost mirror setup LGBM | 0.3949 | 0.388-0.406 | - | done | outputs/experiments/fadhlur/exp013/log.md |
 | fadhlur/exp014 | 2026-10-11 | Blend 60/40 exp011+exp013 | 0.3964 | - | - | done | outputs/experiments/fadhlur/exp014/log.md |
 | fadhlur/exp015 | 2026-10-11 | Agregat per-loan worst/pay-ratio (redundan) | 0.3936 | 0.381-0.412 | - | done | outputs/experiments/fadhlur/exp015/log.md |
+| fadhlur/exp016 | 2026-10-11 | Bagging 3 seed LGBM (negatif) | 0.3941 | - | - | done | outputs/experiments/fadhlur/exp016/log.md |
+| fadhlur/exp017 | 2026-10-11 | CatBoost kategorikal natif | 0.3934 | - | - | done | outputs/experiments/fadhlur/exp017/log.md |
 | fadhlur/exp004 | - | Interaksi rate + bureau per-provider | - | - | - | planned | docs/STRATEGI_AWAL.md |
 | fadhlur/exp005 | - | Perilaku ecommerce | - | - | - | planned | docs/STRATEGI_AWAL.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
