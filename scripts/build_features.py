@@ -156,6 +156,38 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         .tail(1)[["application_id", "days_past_due"]]
     ).rename(columns={"days_past_due": "repay_last_dpd"})
     out = out.merge(last, on="application_id", how="left")
+
+    def traj(d):
+        d = d.sort_values("due_date")
+        dpd = d["days_past_due"].to_numpy()
+        last3 = dpd[-3:]
+        older = dpd[:-3] if len(dpd) > 3 else dpd[:1]
+        first_del = d.loc[d["days_past_due"] > 0, "due_date"].min()
+        months_since = (
+            (d[CUTOFF].iloc[0] - first_del).days / 30.44
+            if pd.notna(first_del)
+            else np.nan
+        )
+        x = np.arange(len(last3), dtype=float)
+        slope = (
+            float(np.polyfit(x, last3.astype(float), 1)[0]) if len(last3) >= 2 else 0.0
+        )
+        return pd.Series(
+            {
+                "repay_last3_dpd_mean": float(last3.mean()),
+                "repay_dpd_slope": slope,
+                "repay_worsening": int(last3.max() > older.max()),
+                "repay_months_since_delinq": months_since,
+            }
+        )
+
+    out = out.merge(
+        m.groupby("application_id")[[CUTOFF, "due_date", "days_past_due"]]
+        .apply(traj)
+        .reset_index(),
+        on="application_id",
+        how="left",
+    )
     return out
 
 
@@ -186,6 +218,29 @@ def agg_account(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "acct_low_days_sum": g["low_balance_days"].sum(),
         }
     ).reset_index()
+
+    def acct_traj(d):
+        d = d.sort_values("month")
+        bal = d["closing_balance"].to_numpy(dtype=float)
+        last3 = bal[-3:]
+        older = bal[:-3] if len(bal) > 3 else bal[:1]
+        return pd.Series(
+            {
+                "acct_closing_last": float(bal[-1]),
+                "acct_drawdown": float(older.mean() - last3.mean()),
+                "acct_low_days_last3": float(
+                    d["low_balance_days"].to_numpy()[-3:].sum()
+                ),
+            }
+        )
+
+    out = out.merge(
+        m.groupby("application_id")[["month", "closing_balance", "low_balance_days"]]
+        .apply(acct_traj)
+        .reset_index(),
+        on="application_id",
+        how="left",
+    )
     return out
 
 
@@ -237,6 +292,24 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         f"bureau_{prov}_{metric}" for metric, prov in wide.columns.to_flat_index()
     ]
     out = out.merge(wide.reset_index(), on="application_id", how="left")
+
+    def score_trend(d):
+        d = d.sort_values("available_datetime")
+        s = d["score"].dropna().to_numpy(dtype=float)
+        return pd.Series(
+            {
+                "bureau_score_trend": float(s[-1] - s[0]) if len(s) >= 2 else 0.0,
+                "bureau_score_last": float(s[-1]) if len(s) >= 1 else np.nan,
+            }
+        )
+
+    out = out.merge(
+        m.groupby("application_id")[["available_datetime", "score"]]
+        .apply(score_trend)
+        .reset_index(),
+        on="application_id",
+        how="left",
+    )
     return out
 
 
