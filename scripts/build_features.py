@@ -109,6 +109,25 @@ def agg_prev(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         .tail(1)[["application_id", "decision"]]
     ).rename(columns={"decision": "prev_last_decision"})
     out = out.merge(last_dec, on="application_id", how="left")
+    last3 = (
+        m.sort_values("decision_datetime")
+        .groupby("application_id")
+        .tail(3)
+        .groupby("application_id")["decision"]
+        .apply(list)
+        .reset_index(name="dec_list")
+    )
+    last3["prev_reject_last3"] = last3["dec_list"].apply(
+        lambda s: sum(1 for d in s if d == "rejected")
+    )
+    last3["prev_approved_last"] = last3["dec_list"].apply(
+        lambda s: int(len(s) > 0 and s[-1] == "approved")
+    )
+    out = out.merge(
+        last3[["application_id", "prev_reject_last3", "prev_approved_last"]],
+        on="application_id",
+        how="left",
+    )
     return out
 
 
@@ -336,6 +355,11 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         on="application_id",
         how="left",
     )
+    spread = (
+        m.groupby("application_id")["score"].agg(["max", "min", "count"]).reset_index()
+    )
+    out["bureau_score_spread"] = spread["max"] - spread["min"]
+    out["bureau_n_providers"] = spread["count"]
     return out
 
 
@@ -375,8 +399,30 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "eco_qty_sum": g["quantity"].sum(),
             "eco_n_cancelled": g["completed"].apply(lambda s: (s == 0).sum()),
             "eco_n_categories": g["product_category"].nunique(),
+            "eco_cod_n": g["payment_method"].apply(lambda s: (s == "COD").sum()),
+            "eco_ewallet_n": g["payment_method"].apply(
+                lambda s: (s == "e_wallet").sum()
+            ),
+            "eco_card_n": g["payment_method"].apply(
+                lambda s: s.isin(["credit_card", "debit_card"]).sum()
+            ),
         }
     ).reset_index()
+    cat_spend = (
+        m[m["completed"] == 1]
+        .groupby(["application_id", "product_category"])["spend"]
+        .sum()
+        .reset_index()
+    )
+    cat_wide = cat_spend.pivot(
+        index="application_id", columns="product_category", values="spend"
+    ).fillna(0)
+    cat_wide.columns = [f"eco_spend_{c}" for c in cat_wide.columns]
+    items = items.merge(cat_wide.reset_index(), on="application_id", how="left")
+    n_items = m.groupby("application_id").size()
+    items["eco_cancel_rate"] = (
+        items["eco_n_cancelled"] / n_items.reindex(items["application_id"]).to_numpy()
+    ).fillna(0)
     return orders.merge(items, on="application_id", how="outer")
 
 
