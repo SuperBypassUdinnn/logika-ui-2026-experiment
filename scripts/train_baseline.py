@@ -47,7 +47,11 @@ def load_data(train_path: str, test_path: str, folds_path: str, drop_extra=()):
     assert train["fold"].notna().all(), "missing folds, run make_folds.py first"
     drop = {ID_COL, TARGET_COL, "fold", "customer_id"}
     drop |= set(train.select_dtypes(include=["datetime64[ns]"]).columns)
-    drop |= set(drop_extra)
+    for c in drop_extra:
+        if c.endswith("*"):
+            drop |= {x for x in train.columns if x.startswith(c[:-1])}
+        else:
+            drop.add(c)
     features = [c for c in train.columns if c not in drop]
     return train, test, features
 

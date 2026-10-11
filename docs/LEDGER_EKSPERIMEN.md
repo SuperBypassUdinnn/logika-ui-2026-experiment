@@ -24,6 +24,30 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp017 | 2026-10-11 | CatBoost kategorikal natif | 0.3934 | - | - | done | outputs/experiments/fadhlur/exp017/log.md |
 | fadhlur/exp018 | 2026-10-11 | Eco kategori+payment, streak prev, spread bureau (87 fitur) | 0.4543 | 0.444-0.475 | - | done | outputs/experiments/fadhlur/exp018/log.md |
 | fadhlur/exp019 | 2026-10-11 | days_since_* + ES200 n5000 reg5 (108 fitur) | 0.4730 | 0.456-0.491 | - | done | outputs/experiments/fadhlur/exp019/log.md |
+| fadhlur/exp020 | 2026-10-11 | XGBoost di 108 fitur | 0.4717 | - | - | done | outputs/experiments/fadhlur/exp020/log.md |
+| fadhlur/exp021 | 2026-10-11 | CatBoost kategorikal natif 108 fitur | 0.4694 | - | - | done | outputs/experiments/fadhlur/exp021/log.md |
+| fadhlur/exp022 | 2026-10-11 | Blend 50/30/20 exp019+020+021 | 0.4757 | - | - | done | outputs/experiments/fadhlur/exp022/log.md |
+| fadhlur/exp023 | 2026-10-11 | Stacker logistik (di bawah blend) | 0.4725 | - | - | done | outputs/experiments/fadhlur/exp023/log.md |
+| fadhlur/exp024 | 2026-10-11 | Rasio lintas-tabel ke income (119 fitur) | 0.4709 | - | - | done | outputs/experiments/fadhlur/exp024/log.md |
+| fadhlur/exp025 | 2026-10-11 | Drop rate_x (ablasi) | 0.4734 | 0.453-0.485 | - | done | outputs/experiments/fadhlur/exp025/log.md |
+| fadhlur/exp026 | 2026-10-11 | Eco recency 30/90d + max order | 0.4744 | - | - | done | outputs/experiments/fadhlur/exp026/log.md |
+| fadhlur/exp027 | 2026-10-11 | Eco velocity + maxdpd + overdue amt (133 fitur) | 0.4972 | 0.489-0.510 | - | done | outputs/experiments/fadhlur/exp027/log.md |
+| fadhlur/exp028 | 2026-10-11 | XGBoost di 133 fitur | 0.4957 | - | - | done | outputs/experiments/fadhlur/exp028/log.md |
+| fadhlur/exp029 | 2026-10-11 | CatBoost 133 fitur | 0.4963 | - | - | done | outputs/experiments/fadhlur/exp029/log.md |
+| fadhlur/exp030 | 2026-10-11 | Blend 40/30/30 (027+028+029) | 0.4987 | - | - | done | outputs/experiments/fadhlur/exp030/log.md |
+| fadhlur/exp031 | 2026-10-11 | Retune min_child 20 di 133 fitur | 0.4984 | - | - | done | outputs/experiments/fadhlur/exp031/log.md |
+| fadhlur/exp032 | 2026-10-11 | Blend 40/30/30 (031+028+029) | 0.4990 | - | - | done | outputs/experiments/fadhlur/exp032/log.md |
+| fadhlur/exp033 | 2026-10-11 | Streak + nmiss bureau (datar) | 0.4984 | - | - | done | outputs/experiments/fadhlur/exp033/log.md |
+| fadhlur/exp034 | 2026-10-11 | Agregat recency-weighted | 0.4978 | - | - | done | outputs/experiments/fadhlur/exp034/log.md |
+| fadhlur/exp036 | 2026-10-11 | late_ratio + overdue_amt_ratio | 0.4971 | - | - | done | outputs/experiments/fadhlur/exp036/log.md |
+| fadhlur/exp037 | 2026-10-11 | Gap order + z-score bureau (146 fitur) | 0.5003 | 0.487-0.512 | - | done | outputs/experiments/fadhlur/exp037/log.md |
+| fadhlur/exp038 | 2026-10-11 | XGBoost di 146 fitur | 0.4983 | - | - | done | outputs/experiments/fadhlur/exp038/log.md |
+| fadhlur/exp039 | 2026-10-11 | CatBoost 146 fitur | 0.4994 | - | - | done | outputs/experiments/fadhlur/exp039/log.md |
+| farhan/exp-final | 2026-10-11 | Repro notebook farhan (OOF referensi) | 0.5050 | 0.482-0.519 | 0.53221 | done | outputs/experiments/farhan/exp-final/log.md |
+| fadhlur/exp040 | 2026-10-11 | Blend 55/20/15/10 farhan+LGBM+XGB+CAT | 0.5056 | 0.495-0.518 | - | done | outputs/experiments/fadhlur/exp040/log.md |
+| fadhlur/exp041 | 2026-10-11 | Eco kategori×recency + tenure (167 fitur) | 0.5039 | 0.488-0.518 | - | done | outputs/experiments/fadhlur/exp041/log.md |
+| fadhlur/exp042 | 2026-10-11 | Blend 70/30 farhan+exp041 | 0.5061 | - | - | done | outputs/experiments/fadhlur/exp042/log.md |
+| fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.

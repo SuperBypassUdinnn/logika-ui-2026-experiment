@@ -147,6 +147,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "amount_due",
             "amount_paid",
             "days_past_due",
+            "max_days_past_due",
             "last_payment_datetime",
         ],
         parse_dates=["due_date", "last_payment_datetime"],
@@ -155,6 +156,10 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = with_cutoff(rep, apps)
     m = m[m["due_date"] < m[CUTOFF]]
     m["overdue"] = (m["days_past_due"] > 0).astype("int8")
+    m["overdue_amt"] = ((m["amount_due"] - m["amount_paid"]).clip(lower=0)) * m[
+        "overdue"
+    ]
+    m["rec_w"] = 1.0 / (1.0 + (m[CUTOFF] - m["due_date"]).dt.days.clip(lower=0) / 30.0)
     m["cured"] = (
         (m["days_past_due"] > 0) & (m["amount_paid"] >= m["amount_due"])
     ).astype("int8")
@@ -167,6 +172,14 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_paid_sum": g["amount_paid"].sum(),
             "repay_dpd_max": g["days_past_due"].max(),
             "repay_overdue_n": g["overdue"].sum(),
+            "repay_overdue_amt_sum": g["overdue_amt"].sum(),
+            "repay_rec_wlate": g.apply(lambda d: (d["overdue"] * d["rec_w"]).sum()),
+            "repay_rec_wdpd": g.apply(
+                lambda d: (d["days_past_due"] * d["rec_w"]).sum()
+            ),
+            "repay_rec_wsum": g["rec_w"].sum(),
+            "repay_maxdpd_max": g["max_days_past_due"].max(),
+            "repay_maxdpd_mean": g["max_days_past_due"].mean(),
             "repay_cured_n": g["cured"].sum(),
             "repay_recent_n": g["recent"].sum(),
             "repay_recent_dpd_max": g.apply(
@@ -185,6 +198,10 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         }
     ).reset_index()
     out["repay_pay_ratio"] = out["repay_paid_sum"] / out["repay_due_sum"].clip(lower=1)
+    out["repay_late_ratio"] = out["repay_overdue_n"] / out["repay_n"].clip(lower=1)
+    out["repay_overdue_amt_ratio"] = out["repay_overdue_amt_sum"] / out[
+        "repay_due_sum"
+    ].clip(lower=1)
     out["repay_recent_pay_ratio"] = out["repay_recent_paid_sum"] / out[
         "repay_recent_due_sum"
     ].clip(lower=1)
@@ -247,12 +264,20 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         slope = (
             float(np.polyfit(x, last3.astype(float), 1)[0]) if len(last3) >= 2 else 0.0
         )
+        trail = 0
+        for v in dpd[::-1]:
+            if v > 0:
+                trail += 1
+            else:
+                break
         return pd.Series(
             {
                 "repay_last3_dpd_mean": float(last3.mean()),
                 "repay_dpd_slope": slope,
                 "repay_worsening": int(last3.max() > older.max()),
                 "repay_months_since_delinq": months_since,
+                "repay_trail_late_n": trail,
+                "repay_last3_late_ratio": float((last3 > 0).mean()),
             }
         )
 
@@ -349,9 +374,16 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         ],
         parse_dates=["report_datetime", "available_datetime"],
     )
-    cut = apps[["application_id", CUTOFF]]
+    cut = apps[["application_id", CUTOFF, "is_train"]]
     m = bur.merge(cut, on="application_id", how="inner")
     m = m[m["available_datetime"] <= m[CUTOFF]]
+    prov_stats = (
+        m[m["is_train"]].groupby("bureau_provider")["score"].agg(["mean", "std"]).reset_index()
+    )
+    prov_map = prov_stats.set_index("bureau_provider")
+    m["score_z"] = (m["score"] - m["bureau_provider"].map(prov_map["mean"])) / m[
+        "bureau_provider"
+    ].map(prov_map["std"]).replace(0, np.nan)
     g = m.groupby("application_id")
     out = pd.DataFrame(
         {
@@ -404,6 +436,10 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     )
     out["bureau_score_spread"] = spread["max"] - spread["min"]
     out["bureau_n_providers"] = spread["count"]
+    out["bureau_score_nmiss"] = 3 - spread["count"]
+    gz = m.groupby("application_id")["score_z"]
+    out["bureau_z_mean"] = gz.mean().reindex(out["application_id"]).to_numpy()
+    out["bureau_z_min"] = gz.min().reindex(out["application_id"]).to_numpy()
     last_rep = (
         m.groupby("application_id")["available_datetime"]
         .max()
@@ -438,6 +474,14 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = m[m["transaction_datetime"] < m[CUTOFF]]
     m["completed"] = (m["order_status"] == "completed").astype("int8")
     m["spend"] = m["item_total"] * m["completed"]
+    m["days_since"] = (m[CUTOFF] - m["transaction_datetime"]).dt.days
+    m["rec_w"] = 1.0 / (1.0 + m["days_since"].clip(lower=0) / 30.0)
+    m["recent90"] = (
+        m["transaction_datetime"] >= m[CUTOFF] - pd.Timedelta(days=90)
+    ).astype("int8")
+    m["recent30"] = (
+        m["transaction_datetime"] >= m[CUTOFF] - pd.Timedelta(days=30)
+    ).astype("int8")
     orders = (
         m.drop_duplicates(["application_id", "order_id"])
         .groupby("application_id")
@@ -461,6 +505,13 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "eco_card_n": g["payment_method"].apply(
                 lambda s: s.isin(["credit_card", "debit_card"]).sum()
             ),
+            "eco_spend_90d": g.apply(lambda d: (d["spend"] * d["recent90"]).sum()),
+            "eco_spend_30d": g.apply(lambda d: (d["spend"] * d["recent30"]).sum()),
+            "eco_rec_wspend": g.apply(lambda d: (d["spend"] * d["rec_w"]).sum()),
+            "eco_n_orders_90d": g.apply(
+                lambda d: d.loc[d["recent90"] == 1, "order_id"].nunique()
+            ),
+            "eco_max_order": g["order_total"].max(),
         }
     ).reset_index()
     cat_spend = (
@@ -474,6 +525,40 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     ).fillna(0)
     cat_wide.columns = [f"eco_spend_{c}" for c in cat_wide.columns]
     items = items.merge(cat_wide.reset_index(), on="application_id", how="left")
+    for w in (30, 90, 180, 365):
+        wm = m[m["days_since"] <= w]
+        wm_c = wm[wm["completed"] == 1]
+        wm_c = wm[wm["completed"] == 1]
+        items[f"eco_sum_done_{w}d"] = (
+            wm_c.groupby("application_id")["order_total"]
+            .sum()
+            .reindex(items["application_id"])
+            .fillna(0)
+            .to_numpy()
+        )
+        items[f"eco_cnt_done_{w}d"] = (
+            wm_c.groupby("application_id").size().reindex(items["application_id"]).fillna(0).to_numpy()
+        )
+        for cat in ("groceries", "fashion", "electronics", "personal_care"):
+            items[f"eco_{cat}_{w}d"] = (
+                wm_c[wm_c["product_category"] == cat]
+                .groupby("application_id")["spend"]
+                .sum()
+                .reindex(items["application_id"])
+                .fillna(0)
+                .to_numpy()
+            )
+    items["eco_vel_30_180"] = items["eco_sum_done_30d"] / (
+        items["eco_sum_done_180d"] / 6
+    ).replace(0, np.nan)
+    items["eco_vel_90_365"] = items["eco_sum_done_90d"] / (
+        items["eco_sum_done_365d"] / 4
+    ).replace(0, np.nan)
+    done = m[m["completed"] == 1].groupby("application_id")["order_total"]
+    items["eco_done_median"] = (
+        done.median().reindex(items["application_id"]).to_numpy()
+    )
+    items["eco_done_std"] = done.std().reindex(items["application_id"]).to_numpy()
     n_items = m.groupby("application_id").size()
     items["eco_cancel_rate"] = (
         items["eco_n_cancelled"] / n_items.reindex(items["application_id"]).to_numpy()
@@ -486,6 +571,29 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items = items.merge(last_txn, on="application_id", how="left")
     items["eco_days_since_txn"] = (items["cutoff"] - items["last_txn"]).dt.days
     items = items.drop(columns=["last_txn", "cutoff"])
+
+    def gap_stats(d):
+        t = d.sort_values("transaction_datetime")["transaction_datetime"]
+        if len(t) < 2:
+            return pd.Series({"eco_gap_mean": np.nan, "eco_n_gaps": 0})
+        gaps = t.diff().dt.days.dropna()
+        return pd.Series({"eco_gap_mean": float(gaps.mean()), "eco_n_gaps": len(gaps)})
+
+    items = items.merge(
+        m.groupby("application_id")[["transaction_datetime"]]
+        .apply(gap_stats)
+        .reset_index(),
+        on="application_id",
+        how="left",
+    )
+    first_txn = (
+        m.groupby("application_id")
+        .agg(first_txn=("transaction_datetime", "min"), cutoff=(CUTOFF, "first"))
+        .reset_index()
+    )
+    items = items.merge(first_txn, on="application_id", how="left")
+    items["eco_tenure_days"] = (items["cutoff"] - items["first_txn"]).dt.days
+    items = items.drop(columns=["first_txn", "cutoff"])
     return orders.merge(items, on="application_id", how="outer")
 
 
@@ -526,6 +634,14 @@ def main() -> None:
         part = fn(data, apps)
         print(f"{name}: {len(part)} applications with history")
         feat = feat.merge(part, on="application_id", how="left")
+
+    inc = feat["declared_monthly_income"].clip(lower=1)
+    feat["eco_spend_to_income"] = feat["eco_spend_sum"] / inc
+    feat["bureau_outstanding_to_income"] = feat["bureau_outstanding_sum"] / inc
+    feat["repay_due_to_income"] = feat["repay_due_sum"] / inc
+    feat["repay_paid_to_income"] = feat["repay_paid_sum"] / inc
+    feat["prev_requested_to_income"] = feat["prev_requested_sum"] / inc
+    feat["acct_outflows_to_income"] = feat["acct_outflows_sum"] / inc
 
     for c in feat.columns:
         if c.startswith(
