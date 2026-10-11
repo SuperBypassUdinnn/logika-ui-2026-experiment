@@ -147,6 +147,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "amount_due",
             "amount_paid",
             "days_past_due",
+            "max_days_past_due",
             "last_payment_datetime",
         ],
         parse_dates=["due_date", "last_payment_datetime"],
@@ -155,6 +156,9 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = with_cutoff(rep, apps)
     m = m[m["due_date"] < m[CUTOFF]]
     m["overdue"] = (m["days_past_due"] > 0).astype("int8")
+    m["overdue_amt"] = ((m["amount_due"] - m["amount_paid"]).clip(lower=0)) * m[
+        "overdue"
+    ]
     m["cured"] = (
         (m["days_past_due"] > 0) & (m["amount_paid"] >= m["amount_due"])
     ).astype("int8")
@@ -167,6 +171,9 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_paid_sum": g["amount_paid"].sum(),
             "repay_dpd_max": g["days_past_due"].max(),
             "repay_overdue_n": g["overdue"].sum(),
+            "repay_overdue_amt_sum": g["overdue_amt"].sum(),
+            "repay_maxdpd_max": g["max_days_past_due"].max(),
+            "repay_maxdpd_mean": g["max_days_past_due"].mean(),
             "repay_cured_n": g["cured"].sum(),
             "repay_recent_n": g["recent"].sum(),
             "repay_recent_dpd_max": g.apply(
@@ -438,6 +445,13 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     m = m[m["transaction_datetime"] < m[CUTOFF]]
     m["completed"] = (m["order_status"] == "completed").astype("int8")
     m["spend"] = m["item_total"] * m["completed"]
+    m["days_since"] = (m[CUTOFF] - m["transaction_datetime"]).dt.days
+    m["recent90"] = (
+        m["transaction_datetime"] >= m[CUTOFF] - pd.Timedelta(days=90)
+    ).astype("int8")
+    m["recent30"] = (
+        m["transaction_datetime"] >= m[CUTOFF] - pd.Timedelta(days=30)
+    ).astype("int8")
     orders = (
         m.drop_duplicates(["application_id", "order_id"])
         .groupby("application_id")
@@ -461,6 +475,12 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "eco_card_n": g["payment_method"].apply(
                 lambda s: s.isin(["credit_card", "debit_card"]).sum()
             ),
+            "eco_spend_90d": g.apply(lambda d: (d["spend"] * d["recent90"]).sum()),
+            "eco_spend_30d": g.apply(lambda d: (d["spend"] * d["recent30"]).sum()),
+            "eco_n_orders_90d": g.apply(
+                lambda d: d.loc[d["recent90"] == 1, "order_id"].nunique()
+            ),
+            "eco_max_order": g["order_total"].max(),
         }
     ).reset_index()
     cat_spend = (
@@ -474,6 +494,27 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     ).fillna(0)
     cat_wide.columns = [f"eco_spend_{c}" for c in cat_wide.columns]
     items = items.merge(cat_wide.reset_index(), on="application_id", how="left")
+    for w in (30, 90, 180, 365):
+        wm = m[m["days_since"] <= w]
+        items[f"eco_sum_done_{w}d"] = (
+            wm[wm["completed"] == 1]
+            .groupby("application_id")["order_total"]
+            .sum()
+            .reindex(items["application_id"])
+            .fillna(0)
+            .to_numpy()
+        )
+    items["eco_vel_30_180"] = items["eco_sum_done_30d"] / (
+        items["eco_sum_done_180d"] / 6
+    ).replace(0, np.nan)
+    items["eco_vel_90_365"] = items["eco_sum_done_90d"] / (
+        items["eco_sum_done_365d"] / 4
+    ).replace(0, np.nan)
+    done = m[m["completed"] == 1].groupby("application_id")["order_total"]
+    items["eco_done_median"] = (
+        done.median().reindex(items["application_id"]).to_numpy()
+    )
+    items["eco_done_std"] = done.std().reindex(items["application_id"]).to_numpy()
     n_items = m.groupby("application_id").size()
     items["eco_cancel_rate"] = (
         items["eco_n_cancelled"] / n_items.reindex(items["application_id"]).to_numpy()

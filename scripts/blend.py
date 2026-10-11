@@ -28,6 +28,7 @@ def main() -> None:
     ap.add_argument("--exp", default="exp014")
     ap.add_argument("--src", nargs="+", required=True)
     ap.add_argument("--weights", nargs="+", type=float, required=True)
+    ap.add_argument("--rank", action="store_true")
     ap.add_argument("--out", default="outputs/experiments")
     ap.add_argument("--src-base", default="outputs/experiments")
     args = ap.parse_args()
@@ -45,6 +46,14 @@ def main() -> None:
         sub = pd.read_csv(d / "submission.csv", usecols=["application_id"])
     oof = sum(w * o for w, o in zip(args.weights, oofs))
     test_pred = sum(w * t for w, t in zip(args.weights, tests))
+    if args.rank:
+        oof = sum(
+            w * pd.Series(o).rank(pct=True).to_numpy() for w, o in zip(args.weights, oofs)
+        )
+        test_pred = sum(
+            w * pd.Series(t).rank(pct=True).to_numpy()
+            for w, t in zip(args.weights, tests)
+        )
     ref = pd.read_csv(srccase / args.src[0] / "oof.csv")
     scores = fold_ks(ref["target"].to_numpy(), oof, ref["fold"].to_numpy())
     print(f"BLEND OOF KS: {scores['oof']:.5f}")
