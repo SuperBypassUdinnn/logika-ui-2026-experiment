@@ -52,7 +52,7 @@ def main() -> None:
         "tree_method": "hist",
         "enable_categorical": True,
         "random_state": args.seed,
-        "n_jobs": 12,
+        "n_jobs": 2,
     }
     base.update(json.loads(args.params))
     y = train[TARGET_COL].to_numpy()
