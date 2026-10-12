@@ -1,0 +1,126 @@
+[{"stream_name":"stderr","time":8.53488166,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.534945151,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.534953065,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.534957611,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":9.282555101,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.282602535,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.282609273,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.282613788,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":17.395574746,"data":"python 3.13.15\n"}
+,{"stream_name":"stdout","time":17.395626227,"data":"numpy 2.1.3\n"}
+,{"stream_name":"stdout","time":17.395632343,"data":"pandas 2.3.3\n"}
+,{"stream_name":"stdout","time":17.395636196,"data":"scipy 1.16.3\n"}
+,{"stream_name":"stdout","time":17.395639881,"data":"sklearn 1.6.1\n"}
+,{"stream_name":"stdout","time":17.395643625,"data":"lightgbm 4.6.0\n"}
+,{"stream_name":"stdout","time":17.909965808,"data":"DATA_DIR = /kaggle/input/competitions/data-science-competition-logika-ui-2026\n"}
+,{"stream_name":"stdout","time":58.188462812,"data":"Target rate train : 13.5814%  (n=70,000, positif=9,507)\n"}
+,{"stream_name":"stdout","time":58.188630216,"data":"Train decision    : 2025-01-01 08:00:00 -\u003e 2025-12-28 20:59:00\n"}
+,{"stream_name":"stdout","time":58.188640958,"data":"Test  decision    : 2025-01-01 08:07:00 -\u003e 2025-12-28 20:52:00\n"}
+,{"stream_name":"stdout","time":58.188646161,"data":"Customer test yang juga ada di train: 0.00%\n"}
+,{"stream_name":"stdout","time":58.188650631,"data":"Aplikasi per customer (train): {'mean': 1.0, 'max': 1.0}\n"}
+,{"stream_name":"stdout","time":83.002930193,"data":"disimpan ke artifacts/features_v0.parquet (21s)\n"}
+,{"stream_name":"stdout","time":83.002987437,"data":"Shape FE: (100000, 118)\n"}
+,{"stream_name":"stdout","time":115.061477964,"data":"disimpan ke artifacts/features_v1.parquet (32s)\n"}
+,{"stream_name":"stdout","time":115.061529973,"data":"FE1: (100000, 255) | fitur baru: 137 | index unik: True\n"}
+,{"stream_name":"stdout","time":118.52467672,"data":"Fitur dengan KS \u003e 0.40 (periksa kemungkinan kebocoran): ['rep_late_ratio', 'rep_mean_dpd', 'rep_late30_ratio']\n"}
+,{"stream_name":"stdout","time":125.780978244,"data":"Fitur dengan drift \u003e 0.10: tidak ada\n"}
+,{"stream_name":"stdout","time":125.836687176,"data":"=== RINGKASAN ===\n"}
+,{"stream_name":"stdout","time":125.836734645,"data":"Target rate train : 13.58%\n"}
+,{"stream_name":"stdout","time":125.836740754,"data":"Jumlah fitur      : 114 (110 numerik, 4 kategorikal)\n"}
+,{"stream_name":"stdout","time":125.83674561,"data":"Fitur KS tertinggi: rep_late_ratio (0.439)\n"}
+,{"stream_name":"stdout","time":125.836750311,"data":"Overlap customer test-train: 0.0%\n"}
+,{"stream_name":"stdout","time":125.836754874,"data":"Validasi: rentang waktu tumpang tindih -\u003e pakai StratifiedGroupKFold per customer_id.\n"}
+,{"stream_name":"stdout","time":125.836760068,"data":"Langkah berikut: jalankan bagian 6 (baseline LightGBM), ukur KS lokal, lalu submit pertama (bagian 6).\n"}
+,{"stream_name":"stdout","time":126.490622295,"data":"train: (70000, 215)  test: (30000, 215)  target rate: 13.58%  fitur: 215  (v1 aktif: True)\n"}
+,{"stream_name":"stdout","time":126.490694824,"data":"ID test cocok dengan sample_submission\n"}
+,{"stream_name":"stdout","time":157.930883268,"data":"fold 1/5  KS=0.5048  iter=549  (31s)\n"}
+,{"stream_name":"stdout","time":190.557671519,"data":"fold 2/5  KS=0.5127  iter=582  (33s)\n"}
+,{"stream_name":"stdout","time":220.648922972,"data":"fold 3/5  KS=0.5188  iter=529  (30s)\n"}
+,{"stream_name":"stdout","time":241.689312391,"data":"fold 4/5  KS=0.5147  iter=274  (21s)\n"}
+,{"stream_name":"stdout","time":266.194250082,"data":"fold 5/5  KS=0.4824  iter=374  (25s)\n"}
+,{"stream_name":"stdout","time":266.194296679,"data":"\n"}
+,{"stream_name":"stdout","time":266.194302707,"data":"OOF KS = 0.5049 | OOF AUC = 0.8334 | fold KS = 0.5067 +/- 0.0130\n"}
+,{"stream_name":"stdout","time":267.403870807,"data":"Fitur dengan importance 0 (0): []\n"}
+,{"stream_name":"stdout","time":267.693442999,"data":"Submission disimpan: submissions/sub_lgbm_final_ks0.5049.csv (30000, 2)\n"}
+,{"stream_name":"stdout","time":267.935469986,"data":"aplikasi: 100000 | fitur audit: 111 | kolom konstan dibuang: ['term_months', 'has_bur', 'has_ec']\n"}
+,{"stream_name":"stdout","time":268.461760153,"data":"baris cicilan x aplikasi: 1361341\n"}
+,{"stream_name":"stdout","time":268.556559188,"data":"[LOLOS]   tidak ada due_date/last_payment setelah cutoff\n"}
+,{"stream_name":"stdout","time":268.557029469,"data":"[LOLOS]   DPD tidak melebihi hari berjalan sampai cutoff  -\u003e dpd=0, max_dpd=0\n"}
+,{"stream_name":"stdout","time":269.297374074,"data":"baris tidak cocok: 402397 (29.56%)\n"}
+,{"stream_name":"stdout","time":269.972090405,"data":"loan_id cicilan ditemukan di previous_applications : 100.00%\n"}
+,{"stream_name":"stdout","time":269.9721394,"data":"pinjaman lama diputuskan setelah cutoff            : 0.0000%\n"}
+,{"stream_name":"stdout","time":269.972146221,"data":"cicilan jatuh tempo sebelum pinjamannya diputuskan : 0.0000%\n"}
+,{"stream_name":"stdout","time":269.972150792,"data":"[LOLOS]   pinjaman lama pada riwayat cicilan tidak diputuskan setelah cutoff  -\u003e 0.0000%\n"}
+,{"stream_name":"stdout","time":270.392765814,"data":"[LOLOS]   fitur repayment tidak berbeda distribusi antara train dan test  -\u003e KS maks = 0.0084\n"}
+,{"stream_name":"stdout","time":273.25749263,"data":"fitur aman: (66157, 18)\n"}
+,{"stream_name":"stdout","time":273.448134384,"data":"{'customer_id duplikat': 0, 'masa kerja \u003e (usia-15) tahun': 0, 'penghasilan \u003c= 0': 0, 'usia di luar 18-80': 0}\n"}
+,{"stream_name":"stdout","time":273.448182227,"data":"[LOLOS]   profil unik per customer dan nilai wajar  -\u003e {'customer_id duplikat': 0, 'masa kerja \u003e (usia-15) tahun': 0, 'penghasilan \u003c= 0': 0, 'usia di luar 18-80': 0}\n"}
+,{"stream_name":"stdout","time":273.721416464,"data":"[LOLOS]   profil tidak berkorelasi dengan waktu keputusan  -\u003e |rho| maks = 0.0066\n"}
+,{"stream_name":"stdout","time":274.117875428,"data":"[LOLOS]   profil tidak berbeda distribusi antara train dan test  -\u003e maks = 0.0099\n"}
+,{"stream_name":"stdout","time":274.248283789,"data":"[LOLOS]   satu baris per application_id di FE  -\u003e FE=100000, ALL=100000\n"}
+,{"stream_name":"stdout","time":274.248329463,"data":"[LOLOS]   tidak ada kolom target/ID di fitur  -\u003e []\n"}
+,{"stream_name":"stdout","time":274.248336745,"data":"[LOLOS]   kolom fitur train == test\n"}
+,{"stream_name":"stdout","time":274.473944247,"data":"ID pengajuan lama yang sama dengan pengajuan yang dinilai: 0\n"}
+,{"stream_name":"stdout","time":274.473983132,"data":"baris riwayat dengan keputusan \u003e= cutoff: 0.0000%\n"}
+,{"stream_name":"stdout","time":274.474008996,"data":"approved tanpa loan_id: 0\n"}
+,{"stream_name":"stdout","time":274.474013428,"data":"[LOLOS]   pengajuan yang dinilai tidak ikut sebagai riwayat  -\u003e overlap ID = 0\n"}
+,{"stream_name":"stdout","time":275.049718517,"data":"laporan terbit sebelum cutoff tapi baru tersedia sesudahnya: 0\n"}
+,{"stream_name":"stdout","time":275.049764543,"data":"(aplikasi, provider) dengan \u003e1 laporan: 0\n"}
+,{"stream_name":"stdout","time":275.049770162,"data":"aplikasi tanpa laporan tersedia: 0 (0.00%)\n"}
+,{"stream_name":"stdout","time":275.049773864,"data":"Baris yang terbit sebelum cutoff tetapi baru tersedia sesudahnya sudah dikeluarkan lewat filter available_datetime.\n"}
+,{"stream_name":"stdout","time":287.907783932,"data":"order dengan atribut tidak konsisten antar item: 0 dari 2986855\n"}
+,{"stream_name":"stdout","time":287.907839937,"data":"[LOLOS]   ecommerce: atribut order konsisten antar item  -\u003e 0 order bermasalah\n"}
+,{"stream_name":"stdout","time":288.739457741,"data":"pelanggaran batas bulan: 0\n"}
+,{"stream_name":"stdout","time":288.73951122,"data":"bulan lengkap per aplikasi: {'count': 70000.0, 'mean': 15.5, 'std': 4.6, 'min': 8.0, '25%': 11.0, '50%': 15.0, '75%': 20.0, 'max': 23.0}\n"}
+,{"stream_name":"stdout","time":288.739518133,"data":"aplikasi tanpa riwayat akun: 30000\n"}
+,{"stream_name":"stdout","time":288.739521782,"data":"[LOLOS]   account: hanya bulan lengkap sebelum cutoff  -\u003e pelanggaran = 0\n"}
+,{"stream_name":"stdout","time":288.959192685,"data":"KS kompetisi: 0.504946 | KS kita: 0.504946\n"}
+,{"stream_name":"stdout","time":288.959241861,"data":"[LOLOS]   ks_score identik dengan fungsi evaluasi kompetisi  -\u003e 0.5049 vs 0.5049\n"}
+,{"stream_name":"stdout","time":289.069541953,"data":"{'LOLOS': 14}\n"}
+,{"stream_name":"stdout","time":289.803696943,"data":"{'V0 fitur v0 lengkap': 114, 'V1 v0 tanpa grup noise': 78, 'V2 + ecommerce v1': 153, 'V3 + bureau v1': 107, 'V4 + repayment v1': 93, 'V5 + previous v1': 87, 'V6 semua v1 + rasio lintas tabel': 215}\n"}
+,{"stream_name":"stdout","time":298.562787097,"data":"  modul win  :  14 kolom  (1s)\n"}
+,{"stream_name":"stdout","time":299.97282954,"data":"  modul time :  11 kolom  (1s)\n"}
+,{"stream_name":"stdout","time":300.542271416,"data":"  modul trd  :   7 kolom  (1s)\n"}
+,{"stream_name":"stdout","time":301.838753895,"data":"  modul cncl :  18 kolom  (1s)\n"}
+,{"stream_name":"stdout","time":304.151209453,"data":"  modul prc  :  18 kolom  (2s)\n"}
+,{"stream_name":"stdout","time":307.979542172,"data":"  modul reg  :  10 kolom  (4s)\n"}
+,{"stream_name":"stdout","time":308.397999716,"data":"disimpan ke artifacts/features_ecom_v2.parquet (17s)\n"}
+,{"stream_name":"stdout","time":308.398050202,"data":"X3: (100000, 84) | index unik: True | sama dengan FE: True\n"}
+,{"stream_name":"stdout","time":308.398057571,"data":"{'win': 14, 'time': 11, 'trd': 7, 'cncl': 18, 'prc': 18, 'reg': 10, 'x': 6}\n"}
+,{"stream_name":"stdout","time":313.67832783,"data":"kolom konstan: []\n"}
+,{"stream_name":"stdout","time":313.67838215,"data":"drift maks = 0.0096 (ec3_cncl_ratio_credit_card)  | KS target maks = 0.3582 (ec3_prc_idx_mean)\n"}
+,{"stream_name":"stdout","time":1222.752577016,"data":"selesai dalam 15.1 menit\n"}
+,{"stream_name":"stdout","time":1223.241804724,"data":"FE1: (100000, 339) | fitur ec3 aktif: 84 | modul: ['win', 'time', 'trd', 'cncl', 'prc', 'reg', 'x']\n"}
+,{"stream_name":"stdout","time":1223.241851146,"data":"X_e: (70000, 299)  X_e_test: (30000, 299)  (baseline X: (70000, 215))\n"}
+,{"stream_name":"stdout","time":1254.990963118,"data":"fold 1/5  KS=0.5147  iter=338  (31s)\n"}
+,{"stream_name":"stdout","time":1296.493855556,"data":"fold 2/5  KS=0.5191  iter=543  (41s)\n"}
+,{"stream_name":"stdout","time":1326.888324246,"data":"fold 3/5  KS=0.5300  iter=324  (30s)\n"}
+,{"stream_name":"stdout","time":1353.687535359,"data":"fold 4/5  KS=0.5159  iter=246  (27s)\n"}
+,{"stream_name":"stdout","time":1379.418448928,"data":"fold 5/5  KS=0.4994  iter=231  (26s)\n"}
+,{"stream_name":"stdout","time":1379.418489483,"data":"\n"}
+,{"stream_name":"stdout","time":1379.418496879,"data":"OOF KS ec3 = 0.5121 | AUC = 0.8383 | baseline (tanpa ec3) = 0.5049 | delta = +0.0072\n"}
+,{"stream_name":"stdout","time":1536.028698614,"data":"seed 42: KS = 0.5121\n"}
+,{"stream_name":"stdout","time":1686.912813368,"data":"seed 43: KS = 0.5127\n"}
+,{"stream_name":"stdout","time":1841.735605375,"data":"seed 44: KS = 0.5144\n"}
+,{"stream_name":"stdout","time":2004.405591623,"data":"seed 45: KS = 0.5126\n"}
+,{"stream_name":"stdout","time":2162.949305876,"data":"seed 46: KS = 0.5098\n"}
+,{"stream_name":"stdout","time":2162.949354496,"data":"KS OOF rata-rata 5 seed = 0.5161  | disimpan: submissions/sub_lgbm_ec3_bag5_ks0.5161.csv\n"}
+,{"stream_name":"stderr","time":2168.499555722,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2168.499608916,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2168.696736191,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2168.696777151,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2169.610346836,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":2169.803699407,"data":"[NbConvertApp] Writing 1463501 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":2172.951315366,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2174.250564034,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":2174.250608828,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.250983192,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.251197795,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.251404588,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.251756638,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.251895834,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.252131685,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.25233811,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.252566938,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":2174.252808239,"data":"[NbConvertApp] Writing 906762 bytes to __results__.html\n"}
+]
