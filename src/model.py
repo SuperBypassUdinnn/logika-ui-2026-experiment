@@ -18,7 +18,7 @@ def make_lgbm(seed: int = 42, **overrides):
         "verbose": -1,
         "seed": seed,
         "deterministic": True,
-        "num_threads": 2,
+        "num_threads": 12,
     }
     params.update(overrides)
     return lgb.LGBMClassifier(**params)

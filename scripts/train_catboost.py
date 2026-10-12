@@ -68,7 +68,7 @@ def main() -> None:
             auto_class_weights="Balanced",
             cat_features=cat_idx,
             random_seed=args.seed,
-            thread_count=2,
+            thread_count=12,
             verbose=False,
             allow_writing_files=False,
         )
