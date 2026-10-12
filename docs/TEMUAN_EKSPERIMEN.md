@@ -97,3 +97,18 @@ overdue-amount ratio, ablasi grup.
   interaksi dengan regularisasi/kapasitas berbeda. Fitur tidak selalu
   transferable antar pipeline — uji ablasi sebelum mengadopsi.
 - Kode port tetap di `src/features/eco.py` (atribusi), di-drop saat train.
+
+## Temuan 10: Resep stabil Farhan v14 (2026-10-12)
+
+- LGBM 5 seed x 5 fold (25 model) + bagging: OOF 0,5161.
+- Pendamping regresi logistik (QuantileTransformer + OneHot, C=0,03,
+  OOF per seed yang sama) + rank-blend 0,7 LGBM / 0,3 LR.
+- Gerbang bootstrap 200x sebelum menerima blend (selisih harus > 0
+  dengan keyakinan 95%).
+- Hasil blend OOF 0,5173 -> public 0,55173 (ref 57121199).
+- Mengapa stabil: penghancur varians (25 model) + diversitas linear
+  + ruang peringkat (kebal kalibrasi) + disiplin statistik.
+- Modul ec3 v14 melebar: time (porsi order malam), trd (tren bulanan),
+  prc (indeks harga vs median), reg (ritme), cncl rinci.
+- Ditiru berikutnya: pendamping LR + rank-blend + gerbang bootstrap
+  (`scripts/train_lr.py` sudah ada, tinggal blend peringkat).

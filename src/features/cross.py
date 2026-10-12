@@ -39,6 +39,13 @@ def apply_cross_ratios(feat: pd.DataFrame) -> pd.DataFrame:
     feat["repay_paid_to_income"] = feat["repay_paid_sum"] / inc
     feat["prev_requested_to_income"] = feat["prev_requested_sum"] / inc
     feat["acct_outflows_to_income"] = feat["acct_outflows_sum"] / inc
+    bs = feat["bureau_score_mean"].fillna(650)
+    feat["x_pay_x_score"] = feat["repay_pay_ratio"].fillna(1) * bs
+    feat["x_dpd_x_score"] = feat["repay_dpd_max"].fillna(0) * (850 - bs)
+    feat["x_spend_x_score"] = feat["eco_spend_sum"].fillna(0) * (850 - bs) / 1e9
+    feat["x_pay_x_rate"] = (
+        feat["repay_pay_ratio"].fillna(1) * feat["annual_interest_rate"]
+    )
     return feat
 
 

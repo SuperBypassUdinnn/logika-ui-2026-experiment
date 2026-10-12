@@ -61,6 +61,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp054 | 2026-10-12 | CatBoost 190 fitur | 0.5052 | - | - | done | outputs/experiments/fadhlur/exp054/log.md |
 | fadhlur/exp055 | 2026-10-12 | Blend 30/35/20/15 (jenuh, di bawah single) | 0.5100 | - | - | done | outputs/experiments/fadhlur/exp055/log.md |
 | fadhlur/exp056 | 2026-10-12 | Tren lintas-loan (mayoritas 1 loan, datar) | 0.5074 | 0.495-0.521 | - | done | outputs/experiments/fadhlur/exp056/log.md |
+| fadhlur/exp071 | 2026-10-12 | Cross top-signal eksplisit (negatif) | 0.5084 | - | - | done | outputs/experiments/fadhlur/exp071/log.md |
 | fadhlur/exp057 | 2026-10-12 | LambdaRank chunk 10k (negatif, query artifisial) | 0.3448 | 0.390-0.433 | - | done | outputs/experiments/fadhlur/exp057/log.md |
 | fadhlur/exp058 | 2026-10-12 | Prune acct+provider+rate | 0.5091 | - | - | done | outputs/experiments/fadhlur/exp058/log.md |
 | fadhlur/exp059 | 2026-10-12 | Blend 35/35/15/15 farhan+052+XGB+CAT (jenuh) | 0.5107 | - | - | done | outputs/experiments/fadhlur/exp059/log.md |
@@ -77,6 +78,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 | farhan/exp-ec3 | 2026-10-12 | Modul ec3 kernel v8 (window 7/14d + spike) | 0.5121 | - | - | done | outputs/experiments/farhan/exp-ec3/log.md |
+| farhan/exp-blend | 2026-10-12 | Kernel v14: 5x5 bag + LR + rank blend w0.3 | 0.5173 | 0.55173 | - | done | outputs/experiments/farhan/ver14/ |
 | fadhlur/exp063 | 2026-10-12 | Blend 60/40 farhan-ec3+exp052 | 0.5132 | - | - | done | outputs/experiments/fadhlur/exp063/log.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.
