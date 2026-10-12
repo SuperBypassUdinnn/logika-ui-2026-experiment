@@ -18,7 +18,10 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "report_datetime",
             "available_datetime",
             "score",
+            "active_accounts",
             "outstanding_balance",
+            "revolving_credit_limit",
+            "revolving_outstanding_balance",
             "utilization",
             "inquiries_last_6m",
             "delinquent_accounts_last_12m",
@@ -48,6 +51,9 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "bureau_util_mean": g["utilization"].mean(),
             "bureau_inq_sum": g["inquiries_last_6m"].sum(),
             "bureau_delinq_max": g["delinquent_accounts_last_12m"].max(),
+            "bureau_active_sum": g["active_accounts"].sum(),
+            "bureau_rev_limit_sum": g["revolving_credit_limit"].sum(),
+            "bureau_rev_out_sum": g["revolving_outstanding_balance"].sum(),
         }
     ).reset_index()
     per_provider = (
@@ -94,6 +100,9 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     gz = m.groupby("application_id")["score_z"]
     out["bureau_z_mean"] = gz.mean().reindex(out["application_id"]).to_numpy()
     out["bureau_z_min"] = gz.min().reindex(out["application_id"]).to_numpy()
+    out["bureau_rev_util"] = out["bureau_rev_out_sum"] / out[
+        "bureau_rev_limit_sum"
+    ].replace(0, np.nan)
     mh = bur.merge(
         apps[["customer_id", "application_id", CUTOFF]], on="customer_id", how="inner"
     )
