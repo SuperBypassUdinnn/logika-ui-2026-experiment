@@ -150,4 +150,32 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items = items.merge(first_txn, on="application_id", how="left")
     items["eco_tenure_days"] = (items["cutoff"] - items["first_txn"]).dt.days
     items = items.drop(columns=["first_txn", "cutoff"])
+
+    done = m["completed"] == 1
+    win = {}
+    for w in (7, 14, 30, 90, 180):
+        inw = m["days_since"] <= w
+        win[f"cd_{w}"] = (inw & done).astype("float32")
+        win[f"cx_{w}"] = (inw & ~done).astype("float32")
+        win[f"sd_{w}"] = (m["order_total"] * (inw & done)).astype("float32")
+    g = pd.DataFrame(win, index=m.index).groupby(m["application_id"]).sum()
+    nz = lambda s: s.replace(0, np.nan)
+    ec3 = pd.DataFrame(index=g.index)
+    for w in (7, 14):
+        ec3[f"ec3_win_cnt_done_{w}d"] = g[f"cd_{w}"]
+        ec3[f"ec3_win_cnt_cancel_{w}d"] = g[f"cx_{w}"]
+        ec3[f"ec3_win_sum_done_{w}d"] = g[f"sd_{w}"]
+        ec3[f"ec3_win_cancel_ratio_{w}d"] = g[f"cx_{w}"] / (
+            g[f"cd_{w}"] + g[f"cx_{w}"]
+        ).replace(0, np.nan)
+    ec3["ec3_win_spk_sum_7_30"] = g["sd_7"] / nz(g["sd_30"] * 7 / 30)
+    ec3["ec3_win_spk_sum_14_90"] = g["sd_14"] / nz(g["sd_90"] * 14 / 90)
+    ec3["ec3_win_spk_sum_30_180"] = g["sd_30"] / nz(g["sd_180"] * 30 / 180)
+    ec3["ec3_win_spk_ord_7_30"] = g["cd_7"] / nz(g["cd_30"] * 7 / 30)
+    ec3["ec3_win_spk_ord_14_90"] = g["cd_14"] / nz(g["cd_90"] * 14 / 90)
+    cr = lambda w: g[f"cx_{w}"] / nz(g[f"cd_{w}"] + g[f"cx_{w}"])
+    ec3["ec3_win_spk_cancel_30_180"] = cr(30) / nz(cr(180))
+    items = items.merge(
+        ec3.reset_index(names="application_id"), on="application_id", how="left"
+    )
     return orders.merge(items, on="application_id", how="outer")

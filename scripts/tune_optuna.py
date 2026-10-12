@@ -75,6 +75,7 @@ def main() -> None:
             "lambda_l1": trial.suggest_float("l1", 0.0, 10.0),
             "lambda_l2": trial.suggest_float("l2", 0.0, 20.0),
             "scale_pos_weight": 3,
+            "num_threads": 2,
         }
         oof, _ = run_params(train, test, features, params, args.seed)
         return fold_ks(y, oof, folds)["oof"]

@@ -87,3 +87,13 @@ overdue-amount ratio, ablasi grup.
 - Setelah PARAMS disamakan plek: notebook 0,5086 vs repo 0,5074 (paritas).
 - Aturan: PARAMS notebook generator tidak boleh disederhanakan; harus mirror
   `make_lgbm` (metric, deterministic, num_threads).
+
+## Temuan 9: Fitur ec3 spesifik-pipeline (2026-10-12)
+
+- Port window 7/14 + spike Farhan ke pipeline sendiri: 0,5103 -> 0,5063
+  (-0,004) di dua konfigurasi (optuna-reg dan Farhan-like). Ablasi
+  konfirmasi: tanpa ec3_* kembali 0,5103.
+- ec3 membantu model Farhan (+0,007) tapi noise di pipeline Dusina:
+  interaksi dengan regularisasi/kapasitas berbeda. Fitur tidak selalu
+  transferable antar pipeline — uji ablasi sebelum mengadopsi.
+- Kode port tetap di `src/features/eco.py` (atribusi), di-drop saat train.
