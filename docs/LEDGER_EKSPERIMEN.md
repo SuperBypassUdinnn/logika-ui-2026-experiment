@@ -78,6 +78,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 | farhan/exp-ec3 | 2026-10-12 | Modul ec3 kernel v8 (window 7/14d + spike) | 0.5121 | - | - | done | outputs/experiments/farhan/exp-ec3/log.md |
+| farhan/exp-blend | 2026-10-12 | Kernel v14: 5x5 bag + LR + rank blend w0.3 | 0.5173 | 0.55173 | - | done | outputs/experiments/farhan/ver14/ |
 | fadhlur/exp063 | 2026-10-12 | Blend 60/40 farhan-ec3+exp052 | 0.5132 | - | - | done | outputs/experiments/fadhlur/exp063/log.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.
