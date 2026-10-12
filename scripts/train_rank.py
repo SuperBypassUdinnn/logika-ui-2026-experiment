@@ -22,6 +22,7 @@ from evaluate_ks import fold_ks
 from scripts.train_baseline import ID_COL, TARGET_COL, load_data
 from utils import ensure_dir, seed_all
 
+
 def chunk_groups(n: int, size: int = 10000) -> list[int]:
     groups = [size] * (n // size)
     if n % size:
