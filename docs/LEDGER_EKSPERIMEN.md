@@ -66,6 +66,8 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp059 | 2026-10-12 | Blend 35/35/15/15 farhan+052+XGB+CAT (jenuh) | 0.5107 | - | - | done | outputs/experiments/fadhlur/exp059/log.md |
 | fadhlur/exp060 | 2026-10-12 | XGBoost matriks berjalan | 0.5019 | - | - | done | outputs/experiments/fadhlur/exp060/log.md |
 | fadhlur/exp061 | 2026-10-12 | CatBoost matriks berjalan | 0.5038 | - | - | done | outputs/experiments/fadhlur/exp061/log.md |
+| fadhlur/exp062 | 2026-10-12 | Optuna 40 trial n100 (lemah, tanpa ES) | 0.4962 | - | - | done | outputs/experiments/fadhlur/exp062/log.md |
+| fadhlur/exp064 | 2026-10-12 | Hyper optuna + setup penuh ES | 0.5103 | - | - | done | outputs/experiments/fadhlur/exp064/log.md |
 | fadhlur/exp006 | 2026-10-11 | Validasi time-split (robust, gap 0.003) | 0.4954 | - | - | done | outputs/experiments/fadhlur/exp006/log.md |
 | fadhlur/exp006 | - | Validasi time-split | - | - | - | planned | docs/STRATEGI_AWAL.md |
 | farhan/exp-ec3 | 2026-10-12 | Modul ec3 kernel v8 (window 7/14d + spike) | 0.5121 | - | - | done | outputs/experiments/farhan/exp-ec3/log.md |
