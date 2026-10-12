@@ -63,7 +63,6 @@ exp006 (fold per kuartal): 0,4954 vs stratified 0,4984 (gap 0,003).
 Tidak ada drift temporal yang mengkhawatirkan.
 
 ## Temuan 7: Reproduksi notebook Farhan bit-identik
-
 Pipeline Farhan dijalankan lokal menghasilkan OOF 0,5049 persis
 (fold per fold sama). Artefak OOF/test-nya diarsipkan di
 `outputs/experiments/farhan/exp-final/` untuk blend reproducible.
@@ -76,3 +75,15 @@ overdue-amount ratio, ablasi grup.
 2. Sequence-level repayment (transisi bucket DPD, bukan agregat).
 3. Blend dengan OOF Ilham saat tersedia (diversitas manusia > diversitas model).
 4. Interaksi silang baru yang belum dicoba (burden-to-income temporal).
+
+## Temuan 8: Metrik bawaan menentukan early stopping, bukan feval
+
+- Notebook Kaggle OOF 0,474 vs repo 0,510 dengan fitur/fold/params "sama".
+  Diagnosis (best_iteration): notebook berhenti iter ~43, repo ~477.
+- Penyebab: PARAMS notebook memakai default `binary_logloss`, repo memakai
+  `metric='auc'` dari `src/model.py`. Pilihan metrik bawaan mengubah lintasan
+  ES meski KS feval identik terpasang di keduanya. Determinisme/threads
+  terbukti tidak berpengaruh (uji pemisah).
+- Setelah PARAMS disamakan plek: notebook 0,5086 vs repo 0,5074 (paritas).
+- Aturan: PARAMS notebook generator tidak boleh disederhanakan; harus mirror
+  `make_lgbm` (metric, deterministic, num_threads).
