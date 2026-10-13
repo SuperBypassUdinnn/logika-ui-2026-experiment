@@ -162,7 +162,7 @@ def main() -> None:
             '    folds["fold"] = -1\n'
             '    for f, (_, va) in enumerate(skf.split(folds, train_apps["target"])):\n'
             '        folds.loc[va, "fold"] = f\n'
-            '    tr_ids = train.merge(folds, on="application_id")\n'
+            '    tr_ids = train.drop(columns=["fold"]).merge(folds, on="application_id")\n'
             "    oof_s = np.zeros(len(train_apps))\n"
             '    for fold in sorted(tr_ids["fold"].unique()):\n'
             '        tr = (tr_ids["fold"] != fold).to_numpy()\n'
