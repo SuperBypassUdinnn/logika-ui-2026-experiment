@@ -20,10 +20,17 @@
 # ## 0. Setup
 
 # %%
+import matplotlib
+
+matplotlib.use("Agg")
+import os
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
+from IPython.display import Image, display
 from scipy.stats import ks_2samp
 
 
@@ -37,6 +44,18 @@ def find_repo_root(marker="data/train_applications.csv"):
 
 DATA = str(find_repo_root())
 SEED = 42
+FIGDIR = str(find_repo_root().parent / "outputs" / "analysis" / "figures")
+os.makedirs(FIGDIR, exist_ok=True)
+
+
+def save_show(fig, name):
+    path = os.path.join(FIGDIR, name)
+    fig.savefig(path, dpi=110, bbox_inches="tight")
+    plt.close(fig)
+    display(Image(filename=path))
+
+
+save_show.counter = 0
 
 # %% [markdown]
 # ## 1. Target overall dan stabilitas waktu
@@ -50,6 +69,28 @@ print("train rows:", len(tr), "| positive rate:", round(tr.target.mean(), 4))
 tr["ym"] = tr.decision_datetime.dt.to_period("M").astype(str)
 print(tr.groupby("ym").target.agg(["mean", "count"]).round(4).to_string())
 print(tr.groupby("loan_purpose").target.mean().round(4).to_string())
+
+# %% [markdown]
+# ## 1b. Visual: stabilitas target
+#
+# Target rate datar per bulan maupun kategori — tidak ada drift yang
+# memaksa time-split.
+
+# %%
+fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+monthly = tr.groupby("ym").target.mean()
+ax[0].plot(monthly.index, monthly.values, marker="o")
+ax[0].axhline(tr.target.mean(), color="red", linestyle="--", label="overall")
+ax[0].set_title("Target rate per bulan")
+ax[0].tick_params(axis="x", rotation=45)
+ax[0].legend()
+prof = pd.read_csv(f"{DATA}/customer_profiles.csv")
+t = tr.merge(prof, on="customer_id")
+t.groupby("employment_type").target.mean().plot.bar(ax=ax[1], color="steelblue")
+ax[1].set_title("Target rate per employment")
+ax[1].set_ylabel("mean target")
+plt.tight_layout()
+save_show(fig, f"eda_{save_show.counter:02d}.png"); save_show.counter += 1
 
 # %% [markdown]
 # ## 2. Sinyal tunggal terkuat: skor bureau dan DPD historis
@@ -77,6 +118,23 @@ both = pd.DataFrame({"dpdmax": g, "target": tr.set_index("customer_id").target})
 print(both.groupby(pd.cut(both.dpdmax, [-1, 0, 30, 90, 9999])).target.agg(["mean", "count"]).round(4).to_string())
 
 # %% [markdown]
+# ## 2b. Visual: distribusi skor dan DPD per kelas
+#
+# Pemisahan visual menjelaskan KS tinggi: skor bureau bergeser kiri
+# untuk gagal bayar, DPD maksimum bergeser kanan.
+
+# %%
+fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+m_ok = m.dropna(subset=["score"])
+sns.histplot(data=m_ok, x="score", hue="target", bins=30, stat="density", common_norm=False, ax=ax[0])
+ax[0].set_title("Skor bureau per target")
+both_ok = both[both.dpdmax < 365]
+sns.histplot(data=both_ok.assign(target=both_ok.target.astype(str)), x="dpdmax", hue="target", bins=30, stat="density", common_norm=False, ax=ax[1])
+ax[1].set_title("DPD maksimum historis per target (dipotong 365)")
+plt.tight_layout()
+save_show(fig, f"eda_{save_show.counter:02d}.png"); save_show.counter += 1
+
+# %% [markdown]
 # ## 3. Ranking KS univariat fitur engineered
 #
 # Dibangun oleh `scripts/build_features.py` (87 fitur exp018).
@@ -102,6 +160,31 @@ for c in f.columns:
     rows.append((c, round(float(ks), 4)))
 for r in sorted(rows, key=lambda r: -r[1])[:15]:
     print(r)
+
+# %% [markdown]
+# ## 3b. Visual: ranking KS dan cakupan fitur
+#
+# Sedikit fitur dominan (ekor panjang) — alasan seleksi fitur dan
+# mengapa blend model sekeluarga cepat jenuh.
+
+# %%
+top = sorted(rows, key=lambda r: -r[1])[:15]
+fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+names, vals = [r[0] for r in top][::-1], [r[1] for r in top][::-1]
+ax[0].barh(names, vals, color="steelblue")
+ax[0].set_title("Top-15 KS univariat")
+cov = []
+for c, _ in top:
+    v = f[c]
+    try:
+        vv = v.astype(float).to_numpy()
+        cov.append(float(np.isnan(vv).mean()))
+    except (ValueError, TypeError):
+        cov.append(0.0)
+ax[1].barh(names, cov, color="darkorange")
+ax[1].set_title("Fraksi missing fitur top-15")
+plt.tight_layout()
+save_show(fig, f"eda_{save_show.counter:02d}.png"); save_show.counter += 1
 
 # %% [markdown]
 # ## 4. Cakupan histori dan audit leakage
