@@ -151,7 +151,7 @@ def main() -> None:
             "ks_metric = lambda yt, yp: ('ks', float(ks_2samp(np.asarray(yp)[np.asarray(yt) == 1], np.asarray(yp)[np.asarray(yt) == 0]).statistic), True)\n"
             f"SEEDS = {args.seeds}\n"
             "for seed in SEEDS:\n"
-            '    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)\n'
+            "    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)\n"
             '    folds = train_apps[["application_id"]].copy()\n'
             '    folds["fold"] = -1\n'
             '    for f, (_, va) in enumerate(skf.split(folds, train_apps["target"])):\n'

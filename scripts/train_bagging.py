@@ -95,9 +95,7 @@ def main() -> None:
     np.save(Path(outdir) / "test_pred.npy", test_bag)
     test_ids = pd.read_csv("data/test_applications.csv", usecols=["application_id"])
     sub = test_ids.merge(
-        pd.DataFrame(
-            {"application_id": test[ID_COL], "default_probability": test_bag}
-        ),
+        pd.DataFrame({"application_id": test[ID_COL], "default_probability": test_bag}),
         on="application_id",
         how="left",
     )
