@@ -112,3 +112,46 @@ overdue-amount ratio, ablasi grup.
   prc (indeks harga vs median), reg (ritme), cncl rinci.
 - Ditiru berikutnya: pendamping LR + rank-blend + gerbang bootstrap
   (`scripts/train_lr.py` sudah ada, tinggal blend peringkat).
+
+## Temuan 11: Ablasi union dua pipeline (2026-10-13)
+
+Drop grup Farhan dari matriks union 445 kolom (baseline ~0,507):
+
+| Grup dibuang | OOF KS |
+|:---|:---:|
+| (penuh) | ~0,507 |
+| ec2_* | 0,5096 |
+| bur2_* | 0,5101 |
+| rep2_* | 0,5093 |
+| prev2_* | 0,5096 |
+| x_* | 0,5088 |
+
+Semua drop netral/positif: grup Farhan redundan penuh dengan fitur
+kita (dan sebaliknya, blend jenuh korelasi 0,92). Dua pipeline
+konvergen ke ranking yang sama. Sisa gap ke 0,53 butuh sinyal baru,
+bukan reshuffle fitur lama. Top milik kita di union: x_pay_x_score,
+repay_maxdpd_mean, eco window/tenure/gap, hist_z.
+
+## Temuan 12: Spesialis segmen tidak menaikkan skor global (2026-10-13)
+
+- Model khusus segmen tanpa-histori: KS 0,471 di segmen vs 0,344 model
+  global — lompatan besar yang ternyata ilusi.
+- Gabung naif (ganti prediksi segmen): OOF global 0,5103 -> 0,5078 (TURUN).
+  Penyebab: skala skor beda merusak ranking global.
+- Rank-mapping: 0,5073. Blend 50/50 di segmen: 0,5104 (+0,0000).
+- Pelajaran: KS adalah metrik ranking global; perbaikan lokal segmen
+  tidak otomatis menaikkan skor gabungan. Uji kombinasinya, bukan hanya
+  skor segmen. Jalur segmen dinyatakan habis untuk target 0,53.
+
+## Temuan 13: Kedua tim mentok di ~0,517 OOF (2026-10-13)
+
+- Farhan 10-seed (2x lipat compute): 0,5154, di BAWAH 5-seed 0,5161.
+  Gate bootstrap-nya sendiri menolak R1/R2 (+0,0005, CI mencakup nol),
+  tapi tetap disubmit dan public 0,55140.
+- Seed spread Farhan: 0,5098-0,5144 (rentang 0,0046) — memvalidasi
+  analisis noise Sonnet. Keputusan di bawah ~0,002 = undian.
+- Kita (0,5132) vs Farhan (0,5178): gap OOF 0,005 tapi public 0,550 vs
+  0,551 (gap 0,001!). Public tidak menghukum gap OOF kecil ini.
+- Kesimpulan: target OOF 0,53 kemungkinan tidak realistis musim ini.
+  Strategi rasional: submit kandidat terbaik tiap hari (public yang
+  dinilai 90%), hentikan grinding OOF di bawah ambang noise.
