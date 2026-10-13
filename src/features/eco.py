@@ -133,10 +133,21 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         if len(t) < 2:
             return pd.Series({"eco_gap_mean": np.nan, "eco_n_gaps": 0})
         gaps = t.diff().dt.days.dropna()
-        return pd.Series({"eco_gap_mean": float(gaps.mean()), "eco_n_gaps": len(gaps)})
+        spend = d.sort_values("transaction_datetime")["spend"].to_numpy(dtype=float)
+        half = len(spend) // 2
+        accel = (
+            float(spend[half:].mean() - spend[:half].mean()) if half >= 1 else 0.0
+        )
+        return pd.Series(
+            {
+                "eco_gap_mean": float(gaps.mean()),
+                "eco_n_gaps": len(gaps),
+                "eco_spend_accel": accel,
+            }
+        )
 
     items = items.merge(
-        m.groupby("application_id")[["transaction_datetime"]]
+        m.groupby("application_id")[["transaction_datetime", "spend"]]
         .apply(gap_stats)
         .reset_index(),
         on="application_id",

@@ -81,5 +81,7 @@ Satu baris per eksperimen. ID = path notebook
 | farhan/exp-blend | 2026-10-12 | Kernel v14: 5x5 bag + LR + rank blend w0.3 | 0.5173 | 0.55173 | - | done | outputs/experiments/farhan/ver14/ |
 | fadhlur/exp063 | 2026-10-12 | Blend 60/40 farhan-ec3+exp052 | 0.5132 | - | - | done | outputs/experiments/fadhlur/exp063/log.md |
 | fadhlur/exp073 | 2026-10-13 | 5-seed bagging via kernel Kaggle (v8) | 0.5087 | - | - | done | outputs/current/fadhlur/kv8.log |
+| fadhlur/exp075 | 2026-10-13 | Spesialis segmen tanpa-histori (0,471 di segmen) | 0.4713 | - | - | done | outputs/experiments/fadhlur/exp075/log.md |
+| fadhlur/exp076 | 2026-10-13 | Transisi bucket DPD + akselerasi spend (negatif) | 0.5073 | 0.498-0.524 | - | done | outputs/experiments/fadhlur/exp076/log.md |
 
 Aturan: tambah baris di PR yang sama dengan `outputs/experiments/expXXX/log.md`.

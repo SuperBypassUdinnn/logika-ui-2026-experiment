@@ -179,6 +179,13 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
                 trail += 1
             else:
                 break
+        bands = pd.cut(dpd, [-1, 0, 30, 90, 10**9], labels=False).astype(int)
+        if len(bands) >= 2:
+            diff = bands[1:] - bands[:-1]
+            up = int((diff > 0).sum())
+            down = int((diff < 0).sum())
+        else:
+            up, down = 0, 0
         return pd.Series(
             {
                 "repay_last3_dpd_mean": float(last3.mean()),
@@ -187,6 +194,8 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
                 "repay_months_since_delinq": months_since,
                 "repay_trail_late_n": trail,
                 "repay_last3_late_ratio": float((last3 > 0).mean()),
+                "repay_n_worsen_trans": up,
+                "repay_n_improve_trans": down,
             }
         )
 
