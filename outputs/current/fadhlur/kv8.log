@@ -1,0 +1,86 @@
+[{"stream_name":"stderr","time":9.4515474,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.451636069,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.451643017,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.451646655,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":10.331233007,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.331295379,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.331300469,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.331303684,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":17.416444342,"data":"DATA: /kaggle/input/competitions/data-science-competition-logika-ui-2026\n"}
+,{"stream_name":"stderr","time":62.322540711,"data":"/tmp/ipykernel_16/3754509591.py:106: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":62.322597019,"data":"  \"prev_req_appr_gap\": g.apply(\n"}
+,{"stream_name":"stderr","time":62.322605934,"data":"\n"}
+,{"stream_name":"stderr","time":62.322612502,"data":"/tmp/ipykernel_16/3754509591.py:106: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":62.322621562,"data":"  \"prev_req_appr_gap\": g.apply(\n"}
+,{"stream_name":"stderr","time":76.847994229,"data":"/tmp/ipykernel_16/3754509591.py:109: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":76.848048916,"data":"  \"prev_days_since_last\": g.apply(\n"}
+,{"stream_name":"stderr","time":76.848056963,"data":"\n"}
+,{"stream_name":"stderr","time":76.848062908,"data":"/tmp/ipykernel_16/3754509591.py:109: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":76.848069823,"data":"  \"prev_days_since_last\": g.apply(\n"}
+,{"stream_name":"stdout","time":87.362835071,"data":"prev 70000\n"}
+,{"stream_name":"stderr","time":108.957936681,"data":"/tmp/ipykernel_16/3754509591.py:214: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":108.958007851,"data":"  \"repay_rec_wlate\": g.apply(lambda d: (d[\"overdue\"] * d[\"rec_w\"]).sum()),\n"}
+,{"stream_name":"stderr","time":108.958014286,"data":"\n"}
+,{"stream_name":"stderr","time":108.958018734,"data":"/tmp/ipykernel_16/3754509591.py:214: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":108.95803151,"data":"  \"repay_rec_wlate\": g.apply(lambda d: (d[\"overdue\"] * d[\"rec_w\"]).sum()),\n"}
+,{"stream_name":"stderr","time":122.624823603,"data":"/tmp/ipykernel_16/3754509591.py:215: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":122.624890483,"data":"  \"repay_rec_wdpd\": g.apply(\n"}
+,{"stream_name":"stderr","time":122.624895717,"data":"\n"}
+,{"stream_name":"stderr","time":122.624898765,"data":"/tmp/ipykernel_16/3754509591.py:215: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":122.624903011,"data":"  \"repay_rec_wdpd\": g.apply(\n"}
+,{"stream_name":"stderr","time":152.484494416,"data":"/tmp/ipykernel_16/3754509591.py:223: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":152.484547539,"data":"  \"repay_recent_dpd_max\": g.apply(\n"}
+,{"stream_name":"stderr","time":152.484555036,"data":"\n"}
+,{"stream_name":"stderr","time":152.48456073,"data":"/tmp/ipykernel_16/3754509591.py:223: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":152.484567933,"data":"  \"repay_recent_dpd_max\": g.apply(\n"}
+,{"stream_name":"stderr","time":166.607024425,"data":"/tmp/ipykernel_16/3754509591.py:230: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":166.607084864,"data":"  \"repay_recent_paid_sum\": g.apply(\n"}
+,{"stream_name":"stderr","time":166.607091121,"data":"\n"}
+,{"stream_name":"stderr","time":166.607095998,"data":"/tmp/ipykernel_16/3754509591.py:230: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":166.607129166,"data":"  \"repay_recent_paid_sum\": g.apply(\n"}
+,{"stream_name":"stderr","time":180.93004399,"data":"/tmp/ipykernel_16/3754509591.py:233: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":180.930117997,"data":"  \"repay_recent_due_sum\": g.apply(\n"}
+,{"stream_name":"stderr","time":180.930122736,"data":"\n"}
+,{"stream_name":"stderr","time":180.93012551,"data":"/tmp/ipykernel_16/3754509591.py:233: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":180.930129233,"data":"  \"repay_recent_due_sum\": g.apply(\n"}
+,{"stream_name":"stdout","time":322.479677575,"data":"repay 66157\n"}
+,{"stream_name":"stdout","time":362.703725462,"data":"account 70000\n"}
+,{"stream_name":"stdout","time":435.656364452,"data":"bureau 100000\n"}
+,{"stream_name":"stderr","time":526.641520192,"data":"/tmp/ipykernel_16/3754509591.py:619: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":526.641649021,"data":"  \"eco_spend_90d\": g.apply(lambda d: (d[\"spend\"] * d[\"recent90\"]).sum()),\n"}
+,{"stream_name":"stderr","time":526.641661203,"data":"\n"}
+,{"stream_name":"stderr","time":526.641686172,"data":"/tmp/ipykernel_16/3754509591.py:619: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":526.641697084,"data":"  \"eco_spend_90d\": g.apply(lambda d: (d[\"spend\"] * d[\"recent90\"]).sum()),\n"}
+,{"stream_name":"stderr","time":548.301509891,"data":"/tmp/ipykernel_16/3754509591.py:620: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":548.30159618,"data":"  \"eco_spend_30d\": g.apply(lambda d: (d[\"spend\"] * d[\"recent30\"]).sum()),\n"}
+,{"stream_name":"stderr","time":548.301604836,"data":"\n"}
+,{"stream_name":"stderr","time":548.301610431,"data":"/tmp/ipykernel_16/3754509591.py:620: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":548.301617246,"data":"  \"eco_spend_30d\": g.apply(lambda d: (d[\"spend\"] * d[\"recent30\"]).sum()),\n"}
+,{"stream_name":"stderr","time":570.063752566,"data":"/tmp/ipykernel_16/3754509591.py:621: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":570.063832128,"data":"  \"eco_rec_wspend\": g.apply(lambda d: (d[\"spend\"] * d[\"rec_w\"]).sum()),\n"}
+,{"stream_name":"stderr","time":570.063842556,"data":"\n"}
+,{"stream_name":"stderr","time":570.063853805,"data":"/tmp/ipykernel_16/3754509591.py:621: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":570.063859708,"data":"  \"eco_rec_wspend\": g.apply(lambda d: (d[\"spend\"] * d[\"rec_w\"]).sum()),\n"}
+,{"stream_name":"stderr","time":616.310586343,"data":"/tmp/ipykernel_16/3754509591.py:622: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":616.310636871,"data":"  \"eco_n_orders_90d\": g.apply(\n"}
+,{"stream_name":"stderr","time":616.310643858,"data":"\n"}
+,{"stream_name":"stderr","time":616.310649074,"data":"/tmp/ipykernel_16/3754509591.py:622: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n"}
+,{"stream_name":"stderr","time":616.310655665,"data":"  \"eco_n_orders_90d\": g.apply(\n"}
+,{"stream_name":"stdout","time":750.485074897,"data":"eco 100000\n"}
+,{"stream_name":"stdout","time":751.375659323,"data":"features: 210 train: (70000, 217) test: (30000, 216)\n"}
+,{"stream_name":"stdout","time":1009.29368589,"data":"seed 42 done\n"}
+,{"stream_name":"stdout","time":1263.357611323,"data":"seed 43 done\n"}
+,{"stream_name":"stdout","time":1514.952999707,"data":"seed 44 done\n"}
+,{"stream_name":"stdout","time":1770.783703595,"data":"seed 45 done\n"}
+,{"stream_name":"stdout","time":2053.552009358,"data":"seed 46 done\n"}
+,{"stream_name":"stdout","time":2053.674802956,"data":"OOF KS: 0.50871 (acuan repo: TBD)\n"}
+,{"stream_name":"stdout","time":2053.674871293,"data":"submission.csv: (30000,)\n"}
+,{"stream_name":"stderr","time":2059.420973233,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2059.421074491,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2059.672776523,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2059.672815404,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2060.743783034,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":2060.842483542,"data":"[NbConvertApp] Writing 54020 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":2064.371430492,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2065.334797516,"data":"[NbConvertApp] Writing 470789 bytes to __results__.html\n"}
+]
