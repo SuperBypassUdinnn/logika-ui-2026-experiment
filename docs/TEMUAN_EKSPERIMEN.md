@@ -147,3 +147,11 @@ overdue-amount ratio, ablasi grup.
 - Pola berulang: model sekeluarga setara, blend-nya jenuh. Diversitas
   harus dari keluarga/pendekatan berbeda (regresi logistik lolos gate
   di exp079; ulangi di matriks baru).
+
+## Temuan 18: Rank-blend XGB+LR tembus 0,52 (2026-10-14)
+
+- LR di matriks ec3-full: 0,5107 (jauh lebih kuat dari 0,4987 di matriks
+  lama — fitur temporal cocok untuk model linear).
+- Rank-blend 60/40 XGB+LR: +0,00452, CI95 di atas nol -> PROVEN.
+- OOF 0,5199, terbaik. Gap ke target 0,53 tinggal 0,01.
+- Pola: diversitas keluarga (pohon + linear) > diversitas implementasi.
