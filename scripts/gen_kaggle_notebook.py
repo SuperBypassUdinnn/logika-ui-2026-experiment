@@ -44,6 +44,7 @@ def main() -> None:
     ap.add_argument("--oof", required=True)
     ap.add_argument("--params", default="{}")
     ap.add_argument("--early-stopping", type=int, default=0)
+    ap.add_argument("--seeds", nargs="+", type=int, default=[42])
     ap.add_argument("--dst", required=True)
     args = ap.parse_args()
     params = json.loads(args.params)
@@ -144,17 +145,28 @@ def main() -> None:
             'print("features:", len(features), "train:", train.shape, "test:", test.shape)'
         ),
         nbf.v4.new_code_cell(
-            'y = train["target"].to_numpy()\n'
-            "oof = np.zeros(len(train))\n"
+            'y = train_apps["target"].to_numpy()\n'
+            "oof = np.zeros(len(train_apps))\n"
             "test_pred = np.zeros(len(test))\n"
             "ks_metric = lambda yt, yp: ('ks', float(ks_2samp(np.asarray(yp)[np.asarray(yt) == 1], np.asarray(yp)[np.asarray(yt) == 0]).statistic), True)\n"
-            'for fold in sorted(train["fold"].unique()):\n'
-            '    tr = train["fold"] != fold\n'
-            "    model = lgb.LGBMClassifier(**PARAMS, random_state=SEED)\n"
-            f"    model.fit(train.loc[tr, features], y[tr], {train_extra})\n"
-            "    oof[~tr] = model.predict_proba(train.loc[~tr, features])[:, 1]\n"
-            "    test_pred += model.predict_proba(test[features])[:, 1] / 5\n"
-            '    print(f"fold {fold} done", flush=True)\n'
+            f"SEEDS = {args.seeds}\n"
+            "for seed in SEEDS:\n"
+            '    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)\n'
+            '    folds = train_apps[["application_id"]].copy()\n'
+            '    folds["fold"] = -1\n'
+            '    for f, (_, va) in enumerate(skf.split(folds, train_apps["target"])):\n'
+            '        folds.loc[va, "fold"] = f\n'
+            '    tr_ids = train.merge(folds, on="application_id")\n'
+            "    oof_s = np.zeros(len(train_apps))\n"
+            '    for fold in sorted(tr_ids["fold"].unique()):\n'
+            '        tr = (tr_ids["fold"] != fold).to_numpy()\n'
+            "        va = ~tr\n"
+            "        model = lgb.LGBMClassifier(**PARAMS, random_state=seed)\n"
+            f"        model.fit(train.loc[tr, features], y[tr], {train_extra})\n"
+            "        oof_s[va] = model.predict_proba(train.loc[va, features])[:, 1]\n"
+            "        test_pred += model.predict_proba(test[features])[:, 1] / (5 * len(SEEDS))\n"
+            "    oof += oof_s / len(SEEDS)\n"
+            '    print(f"seed {seed} done", flush=True)\n'
             "ks = ks_2samp(oof[y == 1], oof[y == 0]).statistic\n"
             f'print(f"OOF KS: {{ks:.5f}} (acuan repo: {args.oof})")\n'
             'pd.DataFrame({"application_id": test["application_id"], '
