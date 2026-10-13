@@ -62,6 +62,7 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp055 | 2026-10-12 | Blend 30/35/20/15 (jenuh, di bawah single) | 0.5100 | - | - | done | outputs/experiments/fadhlur/exp055/log.md |
 | fadhlur/exp056 | 2026-10-12 | Tren lintas-loan (mayoritas 1 loan, datar) | 0.5074 | 0.495-0.521 | - | done | outputs/experiments/fadhlur/exp056/log.md |
 | fadhlur/exp071 | 2026-10-12 | Cross top-signal eksplisit (negatif) | 0.5084 | - | - | done | outputs/experiments/fadhlur/exp071/log.md |
+| fadhlur/exp075 | 2026-10-13 | Spesialis segmen tanpa-histori (0,471 di segmen) | 0.4713 | - | - | done | outputs/experiments/fadhlur/exp075/log.md |
 | fadhlur/exp074 | 2026-10-13 | Union 445 kolendesak farhan+mine (perlu seleksi) | 0.5071 | 0.492-0.531 | - | done | outputs/experiments/fadhlur/exp074/log.md |
 | fadhlur/exp057 | 2026-10-12 | LambdaRank chunk 10k (negatif, query artifisial) | 0.3448 | 0.390-0.433 | - | done | outputs/experiments/fadhlur/exp057/log.md |
 | fadhlur/exp058 | 2026-10-12 | Prune acct+provider+rate | 0.5091 | - | - | done | outputs/experiments/fadhlur/exp058/log.md |

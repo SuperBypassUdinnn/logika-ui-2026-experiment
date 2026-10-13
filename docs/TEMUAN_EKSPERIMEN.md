@@ -131,3 +131,14 @@ kita (dan sebaliknya, blend jenuh korelasi 0,92). Dua pipeline
 konvergen ke ranking yang sama. Sisa gap ke 0,53 butuh sinyal baru,
 bukan reshuffle fitur lama. Top milik kita di union: x_pay_x_score,
 repay_maxdpd_mean, eco window/tenure/gap, hist_z.
+
+## Temuan 12: Spesialis segmen tidak menaikkan skor global (2026-10-13)
+
+- Model khusus segmen tanpa-histori: KS 0,471 di segmen vs 0,344 model
+  global — lompatan besar yang ternyata ilusi.
+- Gabung naif (ganti prediksi segmen): OOF global 0,5103 -> 0,5078 (TURUN).
+  Penyebab: skala skor beda merusak ranking global.
+- Rank-mapping: 0,5073. Blend 50/50 di segmen: 0,5104 (+0,0000).
+- Pelajaran: KS adalah metrik ranking global; perbaikan lokal segmen
+  tidak otomatis menaikkan skor gabungan. Uji kombinasinya, bukan hanya
+  skor segmen. Jalur segmen dinyatakan habis untuk target 0,53.
