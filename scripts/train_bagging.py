@@ -50,12 +50,22 @@ def main() -> None:
     ap.add_argument("--folds", default="train_folds.csv")
     ap.add_argument("--out", default="outputs/experiments")
     ap.add_argument("--params", default="{}")
+    ap.add_argument("--drop-cols", default="")
     ap.add_argument("--early-stopping", type=int, default=200)
     ap.add_argument("--seeds", nargs="+", type=int, default=[42, 43, 44, 45, 46])
     args = ap.parse_args()
     params = json.loads(args.params)
 
     train, test, features = load_data(args.train, args.test, args.folds)
+    drop_extra = [c for c in args.drop_cols.split(",") if c]
+    drop = set()
+    for c in drop_extra:
+        if c.endswith("*"):
+            drop |= {x for x in train.columns if x.startswith(c[:-1])}
+        else:
+            drop.add(c)
+    features = [c for c in features if c not in drop]
+    print(f"features: {len(features)} (dropped {len(drop_extra)} patterns)")
     y = train[TARGET_COL].to_numpy()
     oofs, tests = [], []
 

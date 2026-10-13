@@ -165,3 +165,17 @@ repay_maxdpd_mean, eco window/tenure/gap, hist_z.
 - Kesimpulan: tidak ada sinyal mentah tersisa. Headroom hanya dari
   (a) kombinasi/sequence yang lebih cerdas, (b) model/diversitas baru,
   atau (c) public mapping.
+
+## Temuan 15: Bootstrap gate bekerja dua arah (2026-10-13)
+
+- Rank-blend LGBM-bag + LR (w=0,3): +0,00332 CI95 di atas nol -> DITERIMA
+  (exp079, 0,5124). Pertama kali blend lolos uji tegas.
+- Blend +Farhan di atasnya: delta negatif, CI mencakup nol -> DITOLAK.
+  Tanpa gate, blend ini akan masuk submission dan merusak.
+- Aturan permanen: tidak ada blend tanpa bootstrap gate lolos.
+
+## Temuan 16: XGB/CAT di atas rank-blend ditolak gate (2026-10-14)
+
+- Empat skema bobot XGB+CAT ke exp079: delta +0,0009-0,0013,
+  semua CI95 mencakup nol -> DITOLAK, tanpa artefak.
+- Pola: komponen tree ke-4/ke-5 tidak menambah informasi ortogonal.
