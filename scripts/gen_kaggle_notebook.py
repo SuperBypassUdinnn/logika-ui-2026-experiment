@@ -78,6 +78,12 @@ def main() -> None:
         )
 
     nb = nbf.v4.new_notebook()
+    nb.metadata["kernelspec"] = {
+        "display_name": "Python 3",
+        "language": "python",
+        "name": "python3",
+    }
+    nb.metadata["language_info"] = {"name": "python", "version": "3"}
     nb.cells = [
         nbf.v4.new_markdown_cell(
             f"# {args.exp}: submission notebook (KS)\n\n"
