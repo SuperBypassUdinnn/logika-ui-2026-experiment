@@ -40,6 +40,19 @@ Dokumen ini hasil penyempurnaan dari workflow lomba vision lama.
     bisa didiagnosis dari repo.
 11. Sinkron `notebooks/current/<nama>/` via `scripts/kaggle_sync.py` + PR harian.
 
+## Kebijakan komputasi (Kaggle-first untuk training berat)
+
+- Training berat/lama (full CV, bagging multi-seed, Optuna) jalan di
+  kernel Kaggle `fadhlurrahmanalaudin/logika-ui-2026-notebook-experiment`,
+  bukan lokal. Lokal hanya untuk kerja ringan (fitur audit, blend,
+  eksperimen < 2 menit).
+- Alur: generate notebook via `scripts/gen_kaggle_notebook.py` ke
+  `notebooks/current/fadhlur/` -> commit+push submodule ->
+  `kaggle kernels push -p notebooks/current/fadhlur` (otomatis run) ->
+  download output ke `outputs/current/<nama>/` -> catat ledger.
+- Notebook Kaggle yang sudah run dan ada outputnya diarsipkan ke
+  `outputs/current/<nama>/` (bukti OOF cloud) sebelum diganti.
+
 ## Kepemilikan modul fitur (anti-bentrok)
 
 `src/features/` satu modul per tabel (`prev.py`, `repay.py`, `account.py`,
