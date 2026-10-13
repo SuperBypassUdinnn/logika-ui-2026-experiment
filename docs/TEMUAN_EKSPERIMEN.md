@@ -123,3 +123,11 @@ overdue-amount ratio, ablasi grup.
 - Kesimpulan: tidak ada sinyal mentah tersisa. Headroom hanya dari
   (a) kombinasi/sequence yang lebih cerdas, (b) model/diversitas baru,
   atau (c) public mapping.
+
+## Temuan 15: Bootstrap gate bekerja dua arah (2026-10-13)
+
+- Rank-blend LGBM-bag + LR (w=0,3): +0,00332 CI95 di atas nol -> DITERIMA
+  (exp079, 0,5124). Pertama kali blend lolos uji tegas.
+- Blend +Farhan di atasnya: delta negatif, CI mencakup nol -> DITOLAK.
+  Tanpa gate, blend ini akan masuk submission dan merusak.
+- Aturan permanen: tidak ada blend tanpa bootstrap gate lolos.
