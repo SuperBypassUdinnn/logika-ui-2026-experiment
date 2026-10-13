@@ -135,9 +135,7 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         gaps = t.diff().dt.days.dropna()
         spend = d.sort_values("transaction_datetime")["spend"].to_numpy(dtype=float)
         half = len(spend) // 2
-        accel = (
-            float(spend[half:].mean() - spend[:half].mean()) if half >= 1 else 0.0
-        )
+        accel = float(spend[half:].mean() - spend[:half].mean()) if half >= 1 else 0.0
         return pd.Series(
             {
                 "eco_gap_mean": float(gaps.mean()),
@@ -213,14 +211,26 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     r90 = (m["days_since"] <= 90).to_numpy()
     t90 = tb[r90].groupby(key[r90]).mean().add_prefix("ec3_time_").add_suffix("_90d")
     tfeat = tmean.join(t90)
-    items = items.merge(tfeat.reset_index(names="application_id"), on="application_id", how="left")
+    items = items.merge(
+        tfeat.reset_index(names="application_id"), on="application_id", how="left"
+    )
 
     od = m[m["completed"] == 1].copy()
     od["bucket"] = np.floor(od["days_since"].to_numpy() / 30).astype("int8")
     od = od[od["bucket"] < 6]
     gb = od.groupby(["application_id", "bucket"], observed=True)
-    S = gb["order_total"].sum().unstack(fill_value=0).reindex(columns=range(6), fill_value=0)
-    N = gb.size().unstack(fill_value=0).fillna(0).reindex(columns=range(6), fill_value=0)
+    S = (
+        gb["order_total"]
+        .sum()
+        .unstack(fill_value=0)
+        .reindex(columns=range(6), fill_value=0)
+    )
+    N = (
+        gb.size()
+        .unstack(fill_value=0)
+        .fillna(0)
+        .reindex(columns=range(6), fill_value=0)
+    )
     Sv, Nv = S.to_numpy("float64"), N.to_numpy("float64")
     x = -(np.arange(6) - 2.5)
     slope = lambda M: (M @ x) / (x**2).sum()
@@ -238,7 +248,9 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         },
         index=S.index,
     )
-    items = items.merge(trd.reset_index(names="application_id"), on="application_id", how="left")
+    items = items.merge(
+        trd.reset_index(names="application_id"), on="application_id", how="left"
+    )
 
     is_tr_ids = set(apps.loc[apps["is_train"], "application_id"])
     d = m[m["completed"] & (m["quantity"] > 0)].copy()
@@ -250,7 +262,9 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         .median()
         .to_dict()
     )
-    d = d.assign(up=up, idx=up / d["product_category"].map(cat_med).astype("float64").to_numpy())
+    d = d.assign(
+        up=up, idx=up / d["product_category"].map(cat_med).astype("float64").to_numpy()
+    )
     gd = d.groupby("application_id")
     prc = pd.DataFrame(
         {
