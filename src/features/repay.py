@@ -89,6 +89,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             loan_dpd_max=("days_past_due", "max"),
             loan_due=("amount_due", "sum"),
             loan_paid=("amount_paid", "sum"),
+            loan_n_inst=("days_past_due", "size"),
         )
         .reset_index()
     )
@@ -109,6 +110,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_n_loans90": gl["loan_bad90"].sum(),
             "repay_worst_loan_pay_ratio": gl["loan_pay_ratio"].min(),
             "repay_mean_loan_pay_ratio": gl["loan_pay_ratio"].mean(),
+            "repay_mean_loan_n_inst": gl["loan_n_inst"].mean(),
         }
     ).reset_index()
     out = out.merge(loan_agg, on="application_id", how="left")
@@ -179,6 +181,13 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
                 trail += 1
             else:
                 break
+        bands = pd.cut(dpd, [-1, 0, 30, 90, 10**9], labels=False).astype(int)
+        if len(bands) >= 2:
+            diff = bands[1:] - bands[:-1]
+            up = int((diff > 0).sum())
+            down = int((diff < 0).sum())
+        else:
+            up, down = 0, 0
         return pd.Series(
             {
                 "repay_last3_dpd_mean": float(last3.mean()),
@@ -187,6 +196,8 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
                 "repay_months_since_delinq": months_since,
                 "repay_trail_late_n": trail,
                 "repay_last3_late_ratio": float((last3 > 0).mean()),
+                "repay_n_worsen_trans": up,
+                "repay_n_improve_trans": down,
             }
         )
 

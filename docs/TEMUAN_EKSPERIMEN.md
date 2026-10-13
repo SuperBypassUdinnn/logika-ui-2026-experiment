@@ -155,3 +155,13 @@ repay_maxdpd_mean, eco window/tenure/gap, hist_z.
 - Kesimpulan: target OOF 0,53 kemungkinan tidak realistis musim ini.
   Strategi rasional: submit kandidat terbaik tiap hari (public yang
   dinilai 90%), hentikan grinding OOF di bawah ambang noise.
+## Temuan 14: Audit kolom mentah — material habis (2026-10-13)
+
+- Perbandingan DATA_DICTIONARY vs usecols: semua tabel 95-100% terpakai.
+  Satu-satunya yang belum: `installment_id` (terwakili repay_n),
+  `report_datetime` lag (terkuantisasi 0/30/60/90/120 — sintetis, dilewati).
+- Uji mikro terakhir: `repay_mean_loan_n_inst` KS 0,043,
+  `eco_items_per_order` KS 0,007 — noise. Tidak dilatih.
+- Kesimpulan: tidak ada sinyal mentah tersisa. Headroom hanya dari
+  (a) kombinasi/sequence yang lebih cerdas, (b) model/diversitas baru,
+  atau (c) public mapping.
