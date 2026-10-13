@@ -4,13 +4,13 @@
 # (2 core-equivalents) + low priority. Tune QUOTA if game stutters (100%)
 # or training is too slow and game is fine (300%).
 #
-# Usage: scripts/run_limited.sh <quota%> <command...>
+# Usage: scripts/run_limited.sh [quota%] <command...>
 #   scripts/run_limited.sh 200 ~/.venvs/tabular/bin/python scripts/train_baseline.py ...
+# Default 200 = hemat (~20% mesin). 600 = 50%, 1200 = full.
 set -u
 QUOTA="${1:-200}"
 shift
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
-export LGBM_THREADS=2 XGB_THREADS=2
 exec systemd-run --user --scope --collect \
   -p CPUQuota="${QUOTA}%" \
   -p CPUWeight=20 \

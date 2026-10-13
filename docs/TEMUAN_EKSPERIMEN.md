@@ -112,3 +112,22 @@ overdue-amount ratio, ablasi grup.
   prc (indeks harga vs median), reg (ritme), cncl rinci.
 - Ditiru berikutnya: pendamping LR + rank-blend + gerbang bootstrap
   (`scripts/train_lr.py` sudah ada, tinggal blend peringkat).
+
+## Temuan 11: Ablasi union dua pipeline (2026-10-13)
+
+Drop grup Farhan dari matriks union 445 kolom (baseline ~0,507):
+
+| Grup dibuang | OOF KS |
+|:---|:---:|
+| (penuh) | ~0,507 |
+| ec2_* | 0,5096 |
+| bur2_* | 0,5101 |
+| rep2_* | 0,5093 |
+| prev2_* | 0,5096 |
+| x_* | 0,5088 |
+
+Semua drop netral/positif: grup Farhan redundan penuh dengan fitur
+kita (dan sebaliknya, blend jenuh korelasi 0,92). Dua pipeline
+konvergen ke ranking yang sama. Sisa gap ke 0,53 butuh sinyal baru,
+bukan reshuffle fitur lama. Top milik kita di union: x_pay_x_score,
+repay_maxdpd_mean, eco window/tenure/gap, hist_z.
