@@ -179,3 +179,30 @@ repay_maxdpd_mean, eco window/tenure/gap, hist_z.
 - Empat skema bobot XGB+CAT ke exp079: delta +0,0009-0,0013,
   semua CI95 mencakup nol -> DITOLAK, tanpa artefak.
 - Pola: komponen tree ke-4/ke-5 tidak menambah informasi ortogonal.
+
+## Temuan 17: ec3-full mengangkat single, blend jenuh (2026-10-14)
+
+- Modul ec3 time/trd/prc: LGBM 0,5150, XGB 0,5154 (best single baru),
+  CAT 0,5133. Ketiganya dalam noise satu sama lain.
+- Rank-blend ketiganya: +0,0009-0,0014, semua CI95 mencakup nol ->
+  DITOLAK. Tidak ada artefak blend.
+- Pola berulang: model sekeluarga setara, blend-nya jenuh. Diversitas
+  harus dari keluarga/pendekatan berbeda (regresi logistik lolos gate
+  di exp079; ulangi di matriks baru).
+
+## Temuan 18: Rank-blend XGB+LR tembus 0,52 (2026-10-14)
+
+- LR di matriks ec3-full: 0,5107 (jauh lebih kuat dari 0,4987 di matriks
+  lama — fitur temporal cocok untuk model linear).
+- Rank-blend 60/40 XGB+LR: +0,00452, CI95 di atas nol -> PROVEN.
+- OOF 0,5199, terbaik. Gap ke target 0,53 tinggal 0,01.
+- Pola: diversitas keluarga (pohon + linear) > diversitas implementasi.
+
+## Temuan 19: Semua blend lanjutan ditolak gate (2026-10-14)
+
+- CAT ke exp085: delta +0,000-0,0008, CI mencakup nol -> DITOLAK.
+- Farhan-final ke exp085: delta NEGATIF -0,0008-0,001 -> DITOLAK.
+- exp085 (0,5208) berdiri sendiri. Korelasi antar semua kandidat
+  0,93-0,96: tidak ada diversitas tersisa di antara model yang ada.
+- Jalan ke 0,53 yang tersisa: sinyal baru (belum ditemukan) atau
+  public mapping (submit ukur langsung).
