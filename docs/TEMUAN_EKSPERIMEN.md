@@ -155,3 +155,12 @@ overdue-amount ratio, ablasi grup.
 - Rank-blend 60/40 XGB+LR: +0,00452, CI95 di atas nol -> PROVEN.
 - OOF 0,5199, terbaik. Gap ke target 0,53 tinggal 0,01.
 - Pola: diversitas keluarga (pohon + linear) > diversitas implementasi.
+
+## Temuan 19: Semua blend lanjutan ditolak gate (2026-10-14)
+
+- CAT ke exp085: delta +0,000-0,0008, CI mencakup nol -> DITOLAK.
+- Farhan-final ke exp085: delta NEGATIF -0,0008-0,001 -> DITOLAK.
+- exp085 (0,5208) berdiri sendiri. Korelasi antar semua kandidat
+  0,93-0,96: tidak ada diversitas tersisa di antara model yang ada.
+- Jalan ke 0,53 yang tersisa: sinyal baru (belum ditemukan) atau
+  public mapping (submit ukur langsung).
