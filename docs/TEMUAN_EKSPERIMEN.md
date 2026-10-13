@@ -137,3 +137,13 @@ overdue-amount ratio, ablasi grup.
 - Empat skema bobot XGB+CAT ke exp079: delta +0,0009-0,0013,
   semua CI95 mencakup nol -> DITOLAK, tanpa artefak.
 - Pola: komponen tree ke-4/ke-5 tidak menambah informasi ortogonal.
+
+## Temuan 17: ec3-full mengangkat single, blend jenuh (2026-10-14)
+
+- Modul ec3 time/trd/prc: LGBM 0,5150, XGB 0,5154 (best single baru),
+  CAT 0,5133. Ketiganya dalam noise satu sama lain.
+- Rank-blend ketiganya: +0,0009-0,0014, semua CI95 mencakup nol ->
+  DITOLAK. Tidak ada artefak blend.
+- Pola berulang: model sekeluarga setara, blend-nya jenuh. Diversitas
+  harus dari keluarga/pendekatan berbeda (regresi logistik lolos gate
+  di exp079; ulangi di matriks baru).

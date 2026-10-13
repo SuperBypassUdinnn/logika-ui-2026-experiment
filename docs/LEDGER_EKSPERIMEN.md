@@ -84,6 +84,8 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp075 | 2026-10-13 | Spesialis segmen tanpa-histori (0,471 di segmen) | 0.4713 | - | - | done | outputs/experiments/fadhlur/exp075/log.md |
 | fadhlur/exp076 | 2026-10-13 | Transisi bucket DPD + akselerasi spend (negatif) | 0.5073 | 0.498-0.524 | - | done | outputs/experiments/fadhlur/exp076/log.md |
 | fadhlur/exp080 | 2026-10-14 | Modul ec3 time/trd/prc (best single) | 0.5150 | 0.508-0.534 | - | done | outputs/experiments/fadhlur/exp080/log.md |
+| fadhlur/exp081 | 2026-10-14 | XGBoost matriks ec3-full | 0.5154 | - | - | done | outputs/experiments/fadhlur/exp081/log.md |
+| fadhlur/exp082 | 2026-10-14 | CatBoost matriks ec3-full | 0.5133 | - | - | done | outputs/experiments/fadhlur/exp082/log.md |
 | fadhlur/exp077 | 2026-10-13 | Bagging 5-seed fixed (fold sama, KS-ES) | 0.5091 | - | - | done | outputs/experiments/fadhlur/exp077/log.md |
 | fadhlur/exp078 | 2026-10-13 | LR companion 5 seed | 0.4987 | - | - | done | outputs/experiments/fadhlur/exp078/log.md |
 | fadhlur/exp079 | 2026-10-13 | Rank blend 70/30 LGBM-bag+LR, PROVEN bootstrap | 0.5124 | - | - | done | outputs/experiments/fadhlur/exp079/log.md |
