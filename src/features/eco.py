@@ -193,4 +193,73 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items = items.merge(
         ec3.reset_index(names="application_id"), on="application_id", how="left"
     )
+
+    t = m["transaction_datetime"]
+    h, dow, dom = t.dt.hour.to_numpy(), t.dt.dayofweek.to_numpy(), t.dt.day.to_numpy()
+    ang = 2 * np.pi * h / 24
+    tb = pd.DataFrame(
+        {
+            "night": (h < 6).astype("float32"),
+            "late": (h >= 20).astype("float32"),
+            "wkend": (dow >= 5).astype("float32"),
+            "payday": ((dom >= 25) | (dom <= 5)).astype("float32"),
+            "hsin": np.sin(ang).astype("float32"),
+            "hcos": np.cos(ang).astype("float32"),
+        },
+        index=m.index,
+    )
+    key = m["application_id"]
+    tmean = tb.groupby(key).mean().add_prefix("ec3_time_")
+    r90 = (m["days_since"] <= 90).to_numpy()
+    t90 = tb[r90].groupby(key[r90]).mean().add_prefix("ec3_time_").add_suffix("_90d")
+    tfeat = tmean.join(t90)
+    items = items.merge(tfeat.reset_index(names="application_id"), on="application_id", how="left")
+
+    od = m[m["completed"] == 1].copy()
+    od["bucket"] = np.floor(od["days_since"].to_numpy() / 30).astype("int8")
+    od = od[od["bucket"] < 6]
+    gb = od.groupby(["application_id", "bucket"], observed=True)
+    S = gb["order_total"].sum().unstack(fill_value=0).reindex(columns=range(6), fill_value=0)
+    N = gb.size().unstack(fill_value=0).fillna(0).reindex(columns=range(6), fill_value=0)
+    Sv, Nv = S.to_numpy("float64"), N.to_numpy("float64")
+    x = -(np.arange(6) - 2.5)
+    slope = lambda M: (M @ x) / (x**2).sum()
+    mean = Sv.mean(axis=1)
+    nz = lambda a: np.where(a == 0, np.nan, a)
+    trd = pd.DataFrame(
+        {
+            "ec3_trd_slope_amt": slope(Sv),
+            "ec3_trd_slope_amt_rel": slope(Sv) / nz(mean),
+            "ec3_trd_slope_ord": slope(Nv),
+            "ec3_trd_cv_amt": Sv.std(axis=1) / nz(mean),
+            "ec3_trd_zero_buckets": (Sv == 0).sum(axis=1),
+            "ec3_trd_recent_vs_prior": Sv[:, 0] / nz(Sv[:, 1:].mean(axis=1)),
+            "ec3_trd_last3_vs_prev3": Sv[:, :3].sum(axis=1) / nz(Sv[:, 3:].sum(axis=1)),
+        },
+        index=S.index,
+    )
+    items = items.merge(trd.reset_index(names="application_id"), on="application_id", how="left")
+
+    is_tr_ids = set(apps.loc[apps["is_train"], "application_id"])
+    d = m[m["completed"] & (m["quantity"] > 0)].copy()
+    up = (d["item_total"] / d["quantity"]).to_numpy("float64")
+    is_tr = d["application_id"].isin(is_tr_ids).to_numpy()
+    cat_med = (
+        (d[is_tr]["item_total"] / d[is_tr]["quantity"])
+        .groupby(d[is_tr]["product_category"], observed=True)
+        .median()
+        .to_dict()
+    )
+    d = d.assign(up=up, idx=up / d["product_category"].map(cat_med).astype("float64").to_numpy())
+    gd = d.groupby("application_id")
+    prc = pd.DataFrame(
+        {
+            "ec3_prc_idx_mean": gd["idx"].mean(),
+            "ec3_prc_idx_std": gd["idx"].std(),
+            "ec3_prc_idx_max": gd["idx"].max(),
+            "ec3_prc_up_mean": gd["up"].mean(),
+            "ec3_prc_qty_mean": gd["quantity"].mean(),
+        }
+    ).reset_index(names="application_id")
+    items = items.merge(prc, on="application_id", how="left")
     return orders.merge(items, on="application_id", how="outer")
