@@ -142,3 +142,16 @@ repay_maxdpd_mean, eco window/tenure/gap, hist_z.
 - Pelajaran: KS adalah metrik ranking global; perbaikan lokal segmen
   tidak otomatis menaikkan skor gabungan. Uji kombinasinya, bukan hanya
   skor segmen. Jalur segmen dinyatakan habis untuk target 0,53.
+
+## Temuan 13: Kedua tim mentok di ~0,517 OOF (2026-10-13)
+
+- Farhan 10-seed (2x lipat compute): 0,5154, di BAWAH 5-seed 0,5161.
+  Gate bootstrap-nya sendiri menolak R1/R2 (+0,0005, CI mencakup nol),
+  tapi tetap disubmit dan public 0,55140.
+- Seed spread Farhan: 0,5098-0,5144 (rentang 0,0046) — memvalidasi
+  analisis noise Sonnet. Keputusan di bawah ~0,002 = undian.
+- Kita (0,5132) vs Farhan (0,5178): gap OOF 0,005 tapi public 0,550 vs
+  0,551 (gap 0,001!). Public tidak menghukum gap OOF kecil ini.
+- Kesimpulan: target OOF 0,53 kemungkinan tidak realistis musim ini.
+  Strategi rasional: submit kandidat terbaik tiap hari (public yang
+  dinilai 90%), hentikan grinding OOF di bawah ambang noise.
