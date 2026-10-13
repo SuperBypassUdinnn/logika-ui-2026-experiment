@@ -89,6 +89,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             loan_dpd_max=("days_past_due", "max"),
             loan_due=("amount_due", "sum"),
             loan_paid=("amount_paid", "sum"),
+            loan_n_inst=("days_past_due", "size"),
         )
         .reset_index()
     )
@@ -109,6 +110,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
             "repay_n_loans90": gl["loan_bad90"].sum(),
             "repay_worst_loan_pay_ratio": gl["loan_pay_ratio"].min(),
             "repay_mean_loan_pay_ratio": gl["loan_pay_ratio"].mean(),
+            "repay_mean_loan_n_inst": gl["loan_n_inst"].mean(),
         }
     ).reset_index()
     out = out.merge(loan_agg, on="application_id", how="left")

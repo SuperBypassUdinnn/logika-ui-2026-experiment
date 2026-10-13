@@ -112,3 +112,14 @@ overdue-amount ratio, ablasi grup.
   prc (indeks harga vs median), reg (ritme), cncl rinci.
 - Ditiru berikutnya: pendamping LR + rank-blend + gerbang bootstrap
   (`scripts/train_lr.py` sudah ada, tinggal blend peringkat).
+
+## Temuan 14: Audit kolom mentah — material habis (2026-10-13)
+
+- Perbandingan DATA_DICTIONARY vs usecols: semua tabel 95-100% terpakai.
+  Satu-satunya yang belum: `installment_id` (terwakili repay_n),
+  `report_datetime` lag (terkuantisasi 0/30/60/90/120 — sintetis, dilewati).
+- Uji mikro terakhir: `repay_mean_loan_n_inst` KS 0,043,
+  `eco_items_per_order` KS 0,007 — noise. Tidak dilatih.
+- Kesimpulan: tidak ada sinyal mentah tersisa. Headroom hanya dari
+  (a) kombinasi/sequence yang lebih cerdas, (b) model/diversitas baru,
+  atau (c) public mapping.

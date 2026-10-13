@@ -161,6 +161,10 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items = items.merge(first_txn, on="application_id", how="left")
     items["eco_tenure_days"] = (items["cutoff"] - items["first_txn"]).dt.days
     items = items.drop(columns=["first_txn", "cutoff"])
+    n_orders = m.groupby("application_id")["order_id"].nunique()
+    items["eco_items_per_order"] = items["eco_qty_sum"] / n_orders.reindex(
+        items["application_id"]
+    ).to_numpy().clip(min=1)
 
     done = m["completed"] == 1
     win = {}
