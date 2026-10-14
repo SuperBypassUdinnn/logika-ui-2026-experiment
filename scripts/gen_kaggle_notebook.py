@@ -77,6 +77,29 @@ def main() -> None:
             f"callbacks=[lgb.early_stopping({args.early_stopping}, verbose=False)], "
         )
 
+    import subprocess
+
+    try:
+        sha = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            check=False,
+            text=True,
+            cwd=Path(__file__).resolve().parents[1],
+        ).stdout.strip()
+    except OSError:
+        sha = "unknown"
+
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "model_mod", Path(__file__).resolve().parents[1] / "src" / "model.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    factory_defaults = mod.make_lgbm(seed=42).get_params()
+    merged = {**factory_defaults, **params}
+    merged.pop("random_state", None)
     nb = nbf.v4.new_notebook()
     nb.metadata["kernelspec"] = {
         "display_name": "Python 3",
@@ -92,6 +115,7 @@ def main() -> None:
             "`decision_datetime` (bureau memakai `available_datetime`).\n\n"
             "Kode fitur di-inline dari `src/features/` pada repo utama, "
             f"sehingga identik dengan artefak `outputs/experiments/{args.exp}/`."
+            f"\nDi-generate dari commit repo {sha} — cocokkan dengan artefak bila meragukan kesegaran.\n"
         ),
         nbf.v4.new_code_cell(
             "!pip install -q lightgbm scikit-learn pandas pyarrow scipy"
@@ -133,7 +157,7 @@ def main() -> None:
             "from sklearn.model_selection import StratifiedKFold\n"
             "import lightgbm as lgb\n\n"
             "SEED = 42\n"
-            f"PARAMS = {params!r}\n"
+            f"PARAMS = {merged!r}\n"
             "data = Path(DATA)\n"
             "apps = scored_apps(data)\n"
             "feat = base_features(apps, data)\n"
@@ -153,7 +177,7 @@ def main() -> None:
             'train = feat.merge(folds, on="application_id")\n'
             'test = feat[~feat["application_id"].isin(set(train["application_id"]))].copy()\n'
             'drop = {"application_id", "customer_id", "target", "fold", "decision_datetime", "application_datetime", "is_train"}\n'
-            "features = [c for c in train.columns if c not in drop]\n"
+            "features = sorted(c for c in train.columns if c not in drop)\n"
             'for c in train[features].select_dtypes(include=["object", "string"]).columns:\n'
             '    train[c] = train[c].astype("category")\n'
             '    test[c] = test[c].astype("category")\n'

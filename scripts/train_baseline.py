@@ -52,7 +52,7 @@ def load_data(train_path: str, test_path: str, folds_path: str, drop_extra=()):
             drop |= {x for x in train.columns if x.startswith(c[:-1])}
         else:
             drop.add(c)
-    features = [c for c in train.columns if c not in drop]
+    features = sorted(c for c in train.columns if c not in drop)
     return train, test, features
 
 
