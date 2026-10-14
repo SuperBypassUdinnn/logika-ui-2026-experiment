@@ -73,6 +73,10 @@ Notebook boleh dipakai untuk EDA dan narasi, tapi logika tetap di `src/`:
 3. Sinkron: `jupytext --sync`, eksekusi penuh `jupyter nbconvert --execute`.
 4. Commit keduanya (`.ipynb` + `.py`), output dipertahankan.
 5. Cek: `ruff check` pada `.py` pasangan sebelum PR.
+6. Eksekusi memakai kernel venv: `--ExecutePreprocessor.kernel_name=tabular`
+   (kernel default salah environment).
+7. Backend Agg menelan figure di nbconvert — pola yang jalan: `savefig`
+   ke `outputs/analysis/figures/` + `display(Image(...))`.
 
 ## Aturan nama notebook (anti-bentrok)
 
