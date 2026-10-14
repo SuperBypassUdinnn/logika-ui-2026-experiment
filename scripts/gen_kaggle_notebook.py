@@ -112,7 +112,16 @@ def main() -> None:
             "        for dirpath, _, files in os.walk(root):\n"
             '            if "train_applications.csv" in files:\n'
             "                return dirpath\n"
-            "    return None\n"
+            '    d = os.getcwd()\n'
+            '    for _ in range(6):\n'
+            '        cand = os.path.join(d, "data", "train_applications.csv")\n'
+            '        if os.path.isfile(cand):\n'
+            '            return os.path.join(d, "data")\n'
+            '        nd = os.path.dirname(d)\n'
+            '        if nd == d:\n'
+            '            break\n'
+            '        d = nd\n'
+            '    return None\n'
             "DATA = find_data()\n"
             'assert DATA is not None, ("data tidak ditemukan; "\n'
             '"pastikan dataset kompetisi ter-attach di notebook Kaggle")\n'

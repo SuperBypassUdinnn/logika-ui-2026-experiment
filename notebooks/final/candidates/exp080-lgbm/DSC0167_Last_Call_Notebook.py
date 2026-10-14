@@ -40,6 +40,15 @@ def find_data():
         for dirpath, _, files in os.walk(root):
             if "train_applications.csv" in files:
                 return dirpath
+    d = os.getcwd()
+    for _ in range(6):
+        cand = os.path.join(d, "data", "train_applications.csv")
+        if os.path.isfile(cand):
+            return os.path.join(d, "data")
+        nd = os.path.dirname(d)
+        if nd == d:
+            break
+        d = nd
     return None
 DATA = find_data()
 assert DATA is not None, ("data tidak ditemukan; "
@@ -979,7 +988,8 @@ print("features:", len(features), "train:", train.shape, "test:", test.shape)
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-tr = pd.read_csv(data / 'train_applications.csv')
+from pathlib import Path
+tr = pd.read_csv(Path(DATA) / 'train_applications.csv')
 fig, ax = plt.subplots(1, 2, figsize=(12, 4))
 tr.groupby(tr.decision_datetime.str[:7]).target.mean().plot(ax=ax[0], marker='o')
 ax[0].set_title('Target rate per bulan')
