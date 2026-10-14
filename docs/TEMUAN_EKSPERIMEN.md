@@ -206,3 +206,21 @@ repay_maxdpd_mean, eco window/tenure/gap, hist_z.
   0,93-0,96: tidak ada diversitas tersisa di antara model yang ada.
 - Jalan ke 0,53 yang tersisa: sinyal baru (belum ditemukan) atau
   public mapping (submit ukur langsung).
+
+## Temuan 20: Gate menolak blend 087+088 meski delta positif (2026-10-14)
+
+- Rank-blend LGBM-bag + LR: delta +0,0024-0,0039, tapi SEMUA CI95
+  mencakup nol (batas bawah -0,0001 s.d. -0,0004) -> DITOLAK.
+- Batas gate bekerja persis seperti dirancang: nyaris-lolos tetap gagal.
+- LGBM 5x5 (0,5174) di bawah exp085 (0,5208): bagging penuh tidak
+  mengalahkan komposisi lama. Tidak ada artefak blend baru.
+
+## Temuan 21: Generator harus merge factory defaults (2026-10-14)
+
+- Notebook sakin 0,474-0,495 vs repo 0,507-0,516. Rantai diagnosis:
+  fitur identik (0 diff) -> fold identik -> kategori identik ->
+  urutan kolom (setter, bukan akar) -> akar: PARAMS notebook mentah
+  tanpa default `make_lgbm` (metric/deterministic/threads).
+- Setelah generator merge `make_lgbm(...).get_params()`: 0,5097 vs
+  0,5103 (paritas dalam noise). Red herring tercatat agar tak diulang:
+  metrik-ES, kode basi, urutan kolom.
