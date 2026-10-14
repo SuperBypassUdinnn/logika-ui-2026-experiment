@@ -92,6 +92,8 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp084 | 2026-10-14 | Rank blend 60/40 XGB+LR, PROVEN (best) | 0.5199 | - | - | done | outputs/experiments/fadhlur/exp084/log.md |
 | fadhlur/exp085 | 2026-10-14 | Rank blend equal LGBM+XGB+LR, PROVEN (best) | 0.5208 | - | - | done | outputs/experiments/fadhlur/exp085/log.md |
 | fadhlur/exp086 | 2026-10-14 | CatBoost retrain matriks ec3-full | 0.5133 | - | - | done | outputs/experiments/fadhlur/exp086/log.md |
+| fadhlur/exp087 | 2026-10-14 | LGBM 5x5 bag KS-ES matriks berjalan | 0.5174 | - | - | done | outputs/experiments/fadhlur/exp087/log.md |
+| fadhlur/exp088 | 2026-10-14 | LR companion 5 seed matriks berjalan | 0.5106 | - | - | done | outputs/experiments/fadhlur/exp088/log.md |
 | fadhlur/exp077 | 2026-10-13 | Bagging 5-seed fixed (fold sama, KS-ES) | 0.5091 | - | - | done | outputs/experiments/fadhlur/exp077/log.md |
 | fadhlur/exp078 | 2026-10-13 | LR companion 5 seed | 0.4987 | - | - | done | outputs/experiments/fadhlur/exp078/log.md |
 | fadhlur/exp079 | 2026-10-13 | Rank blend 70/30 LGBM-bag+LR, PROVEN bootstrap | 0.5124 | - | - | done | outputs/experiments/fadhlur/exp079/log.md |
