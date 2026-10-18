@@ -224,3 +224,27 @@ repay_maxdpd_mean, eco window/tenure/gap, hist_z.
 - Setelah generator merge `make_lgbm(...).get_params()`: 0,5097 vs
   0,5103 (paritas dalam noise). Red herring tercatat agar tak diulang:
   metrik-ES, kode basi, urutan kolom.
+
+## Temuan 22: Notebook analisis exp084/085 + efek urutan kolom (2026-10-18)
+
+- Dibuat notebook analisis end-to-end untuk dua eksperimen terbaik di
+  `notebooks/experiments/fadhlur/` (exp084_rank_blend_xgb_lr,
+  exp085_rank_blend_lgbm_xgb_lr) via generator
+  `scripts/gen_blend_notebook.py`: reproduksi komponen + rank-blend,
+  tabel KS per fold, korelasi spearman, figure, gate bootstrap 200x.
+- Paritas notebook == repo HEAD sempurna: LGBM 0,50974 (fold-per-fold
+  identik dengan re-run train_baseline), XGB 0,51437, LR 0,51061.
+- Artefak arsip exp080/081/083/084/085 dibuat SEBELUM perubahan urutan
+  kolom (commit 099a688, 14 Okt 11:58; arsip exp080 01:06). Selisih:
+  LGBM 0,5150->0,5097, XGB 0,5154->0,5144, LR 0,5107->0,5106,
+  blend 0,5199->0,5189 dan 0,5208->0,5192.
+- Kontrol terkendali: konfigurasi sama, hanya urutan kolom diubah ->
+  LGBM unsorted 0,5164 vs sorted 0,5097 (-0,0067, setara satu undian
+  seed); residu run-to-run urutan sama ~0,0014 (arsip 0,5150 vs
+  re-run unsorted 0,5164).
+- Konsekuensi: delta single-run pohon di bawah ~0,005 jangan
+  ditafsirkan tanpa gate/CI; reproduksi arsip persis memerlukan urutan
+  kolom ikut dipatok. Gate bootstrap notebook tetap PROVEN semua
+  (CI95 bawah >= +0,0011).
+- Catatan kecil: log exp085 mencatat 0,52088, artefak tersimpan
+  rescore 0,52081 — pakai artefak sebagai sumber acuan.

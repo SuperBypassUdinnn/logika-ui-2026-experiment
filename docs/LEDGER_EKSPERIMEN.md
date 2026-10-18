@@ -89,8 +89,8 @@ Satu baris per eksperimen. ID = path notebook
 | fadhlur/exp081 | 2026-10-14 | XGBoost matriks ec3-full | 0.5154 | - | - | done | outputs/experiments/fadhlur/exp081/log.md |
 | fadhlur/exp082 | 2026-10-14 | CatBoost matriks ec3-full | 0.5133 | - | - | done | outputs/experiments/fadhlur/exp082/log.md |
 | fadhlur/exp083 | 2026-10-14 | LR companion 5 seed matriks ec3-full | 0.5107 | - | - | done | outputs/experiments/fadhlur/exp083/log.md |
-| fadhlur/exp084 | 2026-10-14 | Rank blend 60/40 XGB+LR, PROVEN (best) | 0.5199 | - | - | done | outputs/experiments/fadhlur/exp084/log.md |
-| fadhlur/exp085 | 2026-10-14 | Rank blend equal LGBM+XGB+LR, PROVEN (best) | 0.5208 | - | - | done | outputs/experiments/fadhlur/exp085/log.md |
+| fadhlur/exp084 | 2026-10-14 | Rank blend 60/40 XGB+LR, PROVEN (best) | 0.5199 | - | - | done | outputs/experiments/fadhlur/exp084/log.md; notebooks/experiments/fadhlur/exp084_rank_blend_xgb_lr.ipynb |
+| fadhlur/exp085 | 2026-10-14 | Rank blend equal LGBM+XGB+LR, PROVEN (best) | 0.5208 | - | - | done | outputs/experiments/fadhlur/exp085/log.md; notebooks/experiments/fadhlur/exp085_rank_blend_lgbm_xgb_lr.ipynb |
 | fadhlur/exp086 | 2026-10-14 | CatBoost retrain matriks ec3-full | 0.5133 | - | - | done | outputs/experiments/fadhlur/exp086/log.md |
 | fadhlur/exp087 | 2026-10-14 | LGBM 5x5 bag KS-ES matriks berjalan | 0.5174 | - | - | done | outputs/experiments/fadhlur/exp087/log.md |
 | fadhlur/exp088 | 2026-10-14 | LR companion 5 seed matriks berjalan | 0.5106 | - | - | done | outputs/experiments/fadhlur/exp088/log.md |
