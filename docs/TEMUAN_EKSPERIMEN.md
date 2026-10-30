@@ -248,3 +248,15 @@ repay_maxdpd_mean, eco window/tenure/gap, hist_z.
   (CI95 bawah >= +0,0011).
 - Catatan kecil: log exp085 mencatat 0,52088, artefak tersimpan
   rescore 0,52081 — pakai artefak sebagai sumber acuan.
+
+## Temuan 23: Verifikasi run Kaggle notebook final exp085 (30 Okt 2026)
+
+- Notebook final DSC0167_Last_Call_Notebook di-upload dan di-run sebagai kernel versi 9
+  (fadhlurrahmanalaudin/logika-ui-2026-notebook-experiment), status COMPLETE.
+- Hasil run Kaggle: lgbm 0,50974 / xgb 0,51321 / lr 0,51054 / BLEND 0,51880 (acuan repo 0,52081).
+- Gate bootstrap 200x di Kaggle: semua PROUN — vs lgbm +0,00925 CI95 [+0,00495,+0,01379];
+  vs xgb +0,00545 CI95 [+0,00116,+0,00962]; vs lr +0,00755 CI95 [+0,00320,+0,01161].
+- submission.csv (30000, 2), mean 0,500017; berbeda dari sub05 (arsip) karena efek urutan kolom
+  (Temuan 22). Berkas di root dihapus; sub05 (0,55424, team best) tetap acuan publik. Tidak
+  diajukan sebagai sub baru tanpa persetujuan.
+- Kernel log diunduh (logika-ui-2026-notebook-experiment.log, lokal only, tidak di-commit).

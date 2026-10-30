@@ -17,11 +17,14 @@
 # # DSC0167_Last_Call_Notebook
 #
 # Notebook final tim Last Call (DSC0167) untuk eliminasi LOGIKA UI 2026.
-# Model: 3-way rank blend eksperimen fadhlur/exp085 (LGBM exp080, XGB exp081, LR exp083, bobot sama).
-# OOF KS acuan: 0,5208 (artefak rescore; log 0,52088). Publikasi LB sub05: 0,55424 (team best).
+# Model: 3-way rank blend eksperimen fadhlur/exp085 (LGBM exp080, XGB exp081, LR exp083, bobot sama 1/3).
+# OOF KS acuan repo: 0,5208 (artefak rescore; log 0,52088).
+# Hasil run Kaggle (versi 9, 30 Okt 2026): BLEND OOF KS 0,51880 (lgbm 0,50974, xgb 0,51321, lr 0,51054).
+# Publikasi LB sub05 (exp085): 0,55424 (team best). Gate bootstrap 200x: semua PROVEN.
 #
 # Notebook siap dijalankan ulang di kernel Kaggle: fitur di-inline dari src/features/ dan resolver
 # mencakup /kaggle/input. Tidak dieksekusi secara lokal per instruksi tim.
+#
 
 # %%
 # !pip install -q lightgbm xgboost scikit-learn pandas pyarrow scipy matplotlib
@@ -33,6 +36,8 @@ CANDIDATES = [
     "/kaggle/input/competitions/data-science-competition-logika-ui-2026",
     "/kaggle/input/data-science-competition-logika-ui-2026",
 ]
+
+
 def find_data():
     for c in CANDIDATES:
         if os.path.isfile(os.path.join(c, "train_applications.csv")):
@@ -53,9 +58,12 @@ def find_data():
             break
         d = nd
     return None
+
+
 DATA = find_data()
-assert DATA is not None, ("data tidak ditemukan; "
-"pastikan dataset kompetisi ter-attach di notebook Kaggle")
+assert DATA is not None, (
+    "data tidak ditemukan; pastikan dataset kompetisi ter-attach di notebook Kaggle"
+)
 print("DATA:", DATA)
 
 # %%
@@ -66,10 +74,12 @@ import pandas as pd
 
 CUTOFF = "decision_datetime"
 
+
 def with_cutoff(aux: pd.DataFrame, apps: pd.DataFrame) -> pd.DataFrame:
     """Attach per-application cutoff to event rows (no filtering)."""
     cut = apps[["customer_id", "application_id", CUTOFF]]
     return aux.merge(cut, on="customer_id", how="inner")
+
 
 def scored_apps(data: Path) -> pd.DataFrame:
     train = pd.read_csv(
@@ -107,6 +117,7 @@ def scored_apps(data: Path) -> pd.DataFrame:
     test["is_train"] = False
     return pd.concat([train, test], ignore_index=True)
 
+
 def base_features(apps: pd.DataFrame, data: Path) -> pd.DataFrame:
     profile = pd.read_csv(data / "customer_profiles.csv")
     feat = apps.merge(profile, on="customer_id", how="left")
@@ -124,6 +135,7 @@ def base_features(apps: pd.DataFrame, data: Path) -> pd.DataFrame:
     feat["decision_month"] = feat[CUTOFF].dt.month.astype("int8")
     feat["decision_weekday"] = feat[CUTOFF].dt.weekday.astype("int8")
     return feat
+
 
 def agg_prev(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     prev = pd.read_csv(
@@ -228,6 +240,7 @@ def agg_prev(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
         .to_numpy()
     )
     return out
+
 
 def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     loan_customer = pd.read_csv(
@@ -431,6 +444,7 @@ def agg_repay(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     )
     return out
 
+
 def agg_account(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     acc = pd.read_csv(
         data / "account_behavior.csv",
@@ -507,6 +521,7 @@ def agg_account(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     )
     out = out.drop(columns=["acct_last_month", CUTOFF])
     return out
+
 
 def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     bur = pd.read_csv(
@@ -635,6 +650,7 @@ def agg_bureau(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     ).dt.days
     out = out.drop(columns=["bureau_last_available", CUTOFF])
     return out
+
 
 def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     eco = pd.read_csv(
@@ -906,6 +922,7 @@ def agg_eco(data: Path, apps: pd.DataFrame) -> pd.DataFrame:
     items = items.merge(prc, on="application_id", how="left")
     return orders.merge(items, on="application_id", how="outer")
 
+
 def apply_cross_ratios(feat: pd.DataFrame) -> pd.DataFrame:
     inc = feat["declared_monthly_income"].clip(lower=1)
     feat["x_total_inst_to_income"] = (
@@ -936,6 +953,7 @@ def apply_cross_ratios(feat: pd.DataFrame) -> pd.DataFrame:
     )
     return feat
 
+
 def finalize(feat: pd.DataFrame) -> pd.DataFrame:
     for c in feat.columns:
         if c.startswith(COUNT_PREFIXES):
@@ -944,9 +962,17 @@ def finalize(feat: pd.DataFrame) -> pd.DataFrame:
     feat["has_account_history"] = (feat["acct_n_months"] > 0).astype("int8")
     return feat
 
+
 COUNT_PREFIXES = (
-    "prev_n", "repay_n", "repay_overdue_n", "acct_n_months", "bureau_n",
-    "eco_n_orders", "eco_n_cancelled", "prev_n_approved", "prev_n_rejected",
+    "prev_n",
+    "repay_n",
+    "repay_overdue_n",
+    "acct_n_months",
+    "bureau_n",
+    "eco_n_orders",
+    "eco_n_cancelled",
+    "prev_n_approved",
+    "prev_n_rejected",
 )
 
 
@@ -958,7 +984,13 @@ SEED = 42
 data = Path(DATA)
 apps = scored_apps(data)
 feat = base_features(apps, data)
-for name, fn in [("prev", agg_prev), ("repay", agg_repay), ("account", agg_account), ("bureau", agg_bureau), ("eco", agg_eco)]:
+for name, fn in [
+    ("prev", agg_prev),
+    ("repay", agg_repay),
+    ("account", agg_account),
+    ("bureau", agg_bureau),
+    ("eco", agg_eco),
+]:
     part = fn(data, apps)
     print(name, len(part))
     feat = feat.merge(part, on="application_id", how="left")
@@ -971,15 +1003,26 @@ folds["fold"] = -1
 for f, (_, va) in enumerate(skf.split(folds, train_apps["target"])):
     folds.loc[va, "fold"] = f
 train = feat.merge(folds, on="application_id")
-assert (train["application_id"].to_numpy() == train_apps["application_id"].to_numpy()).all(), "urutan baris tidak sinkron"
+assert (
+    train["application_id"].to_numpy() == train_apps["application_id"].to_numpy()
+).all(), "urutan baris tidak sinkron"
 y = train["target"].to_numpy()
 test = feat[~feat["application_id"].isin(set(train["application_id"]))].copy()
-drop = {"application_id", "customer_id", "target", "fold", "decision_datetime", "application_datetime", "is_train"}
+drop = {
+    "application_id",
+    "customer_id",
+    "target",
+    "fold",
+    "decision_datetime",
+    "application_datetime",
+    "is_train",
+}
 features = sorted(c for c in train.columns if c not in drop)
 for c in train[features].select_dtypes(include=["object", "string"]).columns:
     train[c] = train[c].astype("category")
     test[c] = test[c].astype("category")
 print("features:", len(features), "train:", train.shape, "test:", test.shape)
+
 
 def ks_score(yt, yp):
     yt = np.asarray(yt)
@@ -990,7 +1033,9 @@ def ks_score(yt, yp):
         return 0.0
     return float(ks_2samp(bad, good).statistic)
 
+
 fold_col = train["fold"].to_numpy()
+
 
 def fold_ks(y_, p_):
     out = {}
@@ -999,6 +1044,7 @@ def fold_ks(y_, p_):
         out[int(f)] = ks_score(y_[m], p_[m])
     out["oof"] = ks_score(y_, p_)
     return out
+
 
 ks_metric = lambda yt, yp: (
     "ks",
@@ -1016,28 +1062,64 @@ RANK = True
 WEIGHTS = [0.3333333333333333, 0.3333333333333333, 0.3333333333333333]
 COMPONENTS = [
     {
-        'name': 'lgbm',
-        'kind': 'lgbm',
-        'seeds': [42],
-        'early_stopping': 200,
-        'params': {'boosting_type': 'gbdt', 'class_weight': None, 'colsample_bytree': 1.0, 'importance_type': 'split', 'learning_rate': 0.01845, 'max_depth': -1, 'min_child_samples': 203, 'min_child_weight': 0.001, 'min_split_gain': 0.0, 'n_estimators': 5000, 'n_jobs': None, 'num_leaves': 21, 'objective': 'binary', 'reg_alpha': 0.0, 'reg_lambda': 0.0, 'subsample': 1.0, 'subsample_for_bin': 200000, 'subsample_freq': 0, 'metric': 'auc', 'feature_fraction': 0.742, 'bagging_fraction': 0.679, 'bagging_freq': 1, 'verbose': -1, 'seed': 42, 'deterministic': True, 'num_threads': 12, 'lambda_l1': 3.68, 'lambda_l2': 16.9, 'scale_pos_weight': 3},
+        "name": "lgbm",
+        "kind": "lgbm",
+        "seeds": [42],
+        "early_stopping": 200,
+        "params": {
+            "boosting_type": "gbdt",
+            "class_weight": None,
+            "colsample_bytree": 1.0,
+            "importance_type": "split",
+            "learning_rate": 0.01845,
+            "max_depth": -1,
+            "min_child_samples": 203,
+            "min_child_weight": 0.001,
+            "min_split_gain": 0.0,
+            "n_estimators": 5000,
+            "n_jobs": None,
+            "num_leaves": 21,
+            "objective": "binary",
+            "reg_alpha": 0.0,
+            "reg_lambda": 0.0,
+            "subsample": 1.0,
+            "subsample_for_bin": 200000,
+            "subsample_freq": 0,
+            "metric": "auc",
+            "feature_fraction": 0.742,
+            "bagging_fraction": 0.679,
+            "bagging_freq": 1,
+            "verbose": -1,
+            "seed": 42,
+            "deterministic": True,
+            "num_threads": 12,
+            "lambda_l1": 3.68,
+            "lambda_l2": 16.9,
+            "scale_pos_weight": 3,
+        },
     },
     {
-        'name': 'xgb',
-        'kind': 'xgb',
-        'seeds': [42],
-        'params': {'n_estimators': 800, 'min_child_weight': 50, 'colsample_bytree': 0.7, 'reg_lambda': 5.0},
+        "name": "xgb",
+        "kind": "xgb",
+        "seeds": [42],
+        "params": {
+            "n_estimators": 800,
+            "min_child_weight": 50,
+            "colsample_bytree": 0.7,
+            "reg_lambda": 5.0,
+        },
     },
     {
-        'name': 'lr',
-        'kind': 'lr',
-        'seeds': [42, 43, 44, 45, 46],
-        'c': 0.03,
+        "name": "lr",
+        "kind": "lr",
+        "seeds": [42, 43, 44, 45, 46],
+        "c": 0.03,
     },
 ]
 
 # %%
 oofs, tests = {}, {}
+
 
 def make_folds(seed):
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
@@ -1046,6 +1128,7 @@ def make_folds(seed):
     for k, (_, va) in enumerate(skf.split(f, train_apps["target"])):
         f.loc[va, "fold"] = k
     return f
+
 
 # --- lgbm (parity: scripts/train_baseline.py + src/model.py make_lgbm) ---
 import lightgbm as lgb
@@ -1068,9 +1151,7 @@ for seed in comp["seeds"]:
             callbacks=[lgb.early_stopping(comp["early_stopping"], verbose=False)],
         )
         oof_s[~tr] = model.predict_proba(train.loc[~tr, features])[:, 1]
-        test_m += model.predict_proba(test[features])[:, 1] / (
-            5 * len(comp["seeds"])
-        )
+        test_m += model.predict_proba(test[features])[:, 1] / (5 * len(comp["seeds"]))
     oof_m += oof_s / len(comp["seeds"])
     print(f"lgbm seed {seed} done", flush=True)
 oofs["lgbm"] = oof_m
@@ -1081,16 +1162,16 @@ import xgboost as xgb
 
 comp = COMPONENTS[1]
 XGB_BASE = {
-    'n_estimators': 500,
-    'learning_rate': 0.03,
-    'max_depth': 6,
-    'min_child_weight': 100,
-    'subsample': 0.8,
-    'colsample_bytree': 0.8,
-    'scale_pos_weight': 3,
-    'tree_method': 'hist',
-    'enable_categorical': True,
-    'n_jobs': 12,
+    "n_estimators": 500,
+    "learning_rate": 0.03,
+    "max_depth": 6,
+    "min_child_weight": 100,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "scale_pos_weight": 3,
+    "tree_method": "hist",
+    "enable_categorical": True,
+    "n_jobs": 12,
 }
 oof_m = np.zeros(len(train))
 test_m = np.zeros(len(test))
@@ -1105,9 +1186,7 @@ for seed in comp["seeds"]:
         model = xgb.XGBClassifier(**params)
         model.fit(train.loc[tr, features], y[tr])
         oof_m[~tr] = model.predict_proba(train.loc[~tr, features])[:, 1]
-        test_m += model.predict_proba(test[features])[:, 1] / (
-            5 * len(comp["seeds"])
-        )
+        test_m += model.predict_proba(test[features])[:, 1] / (5 * len(comp["seeds"]))
     print(f"xgb seed {seed} done", flush=True)
 oofs["xgb"] = oof_m
 tests["xgb"] = test_m
@@ -1129,6 +1208,7 @@ for c in cat_cols:
     X[c] = X[c].astype(str).fillna("MISSING")
     X_test[c] = X_test[c].astype(str).fillna("MISSING")
 
+
 def make_lr():
     num = make_pipeline(
         QuantileTransformer(
@@ -1146,6 +1226,7 @@ def make_lr():
         ]
     )
     return make_pipeline(prep, LogisticRegression(C=comp["c"], max_iter=2000))
+
 
 oof_list = []
 for seed in comp["seeds"]:
@@ -1186,7 +1267,7 @@ for i, n in enumerate(names):
         {
             "komponen": n,
             "bobot": round(float(w[i]), 4),
-            **{f"fold{k}": round(s[k], 5) for k in sorted(k for k in s if k != 'oof')},
+            **{f"fold{k}": round(s[k], 5) for k in sorted(k for k in s if k != "oof")},
             "OOF KS": round(s["oof"], 5),
         }
     )
@@ -1194,7 +1275,10 @@ rows.append(
     {
         "komponen": "BLEND",
         "bobot": 1.0,
-        **{f"fold{k}": round(blend_folds[k], 5) for k in sorted(k for k in blend_folds if k != 'oof')},
+        **{
+            f"fold{k}": round(blend_folds[k], 5)
+            for k in sorted(k for k in blend_folds if k != "oof")
+        },
         "OOF KS": round(ks_blend, 5),
     }
 )
@@ -1273,4 +1357,16 @@ print(sub["default_probability"].describe().round(6))
 # - Matriks korelasi spearman: bila korelasi antar komponen > 0,95, diversitas habis dan blend berikutnya cenderung jenuh (temuan 18/19).
 # - Sel bootstrap: gate 200x resample — blend hanya lolos bila CI95 delta di atas nol untuk semua pembanding.
 # - `submission.csv` ditulis di akhir; bandingkan distribusinya dengan artefak di `outputs/experiments/`.
+# ## Hasil verifikasi run Kaggle (versi 9, 30 Okt 2026)
+#
+# | komponen | OOF KS (Kaggle) | acuan repo |
+# | lgbm | 0,50974 | 0,51502 |
+# | xgb | 0,51321 | 0,51535 |
+# | lr | 0,51054 | 0,51070 |
+# | BLEND | 0,51880 | 0,52081 |
+#
+# Gate bootstrap 200x (seed 42, resample baris): semua PROVEN — vs lgbm +0,00925 CI95 [+0,00495,+0,01379]; vs xgb +0,00545 CI95 [+0,00116,+0,00962]; vs lr +0,00755 CI95 [+0,00320,+0,01161].
+# submission.csv: (30000, 2), unik 30000, mean 0,500017. Berkas di root adalah output unduhan; lokasi kanonis
+# `outputs/submissions/`, tidak di-commit. Selisih vs acuan disebabkan efek urutan kolom (Temuan 22):
+# re-run pipeline lokal saat ini 0,51921; arsip dihasilkan sebelum perubahan urutan kolom.
 #
